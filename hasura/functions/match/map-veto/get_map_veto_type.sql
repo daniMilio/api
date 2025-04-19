@@ -20,11 +20,7 @@ BEGIN
     SELECT COUNT(*) INTO totalPicks FROM match_map_veto_picks WHERE match_id = match.id;
 
     -- Determine pick type based on match_best_of and totalPicks
-    IF bestOf = 1 THEN
-        pickType := 'Ban';
-    ELSE
-        pickType := vetoPattern[totalPicks + 1];
-    END IF;
+    pickType := vetoPattern[totalPicks + 1];
 
     return pickType;
 END
