@@ -1,5 +1,12 @@
 CREATE TABLE "public"."e_ready_settings" ("value" text NOT NULL, "description" text NOT NULL, PRIMARY KEY ("value") );
 
+insert into e_ready_settings ("value", "description") values
+    ('Players', 'All Players'),
+    ('Captains', 'Captains Only'),
+    ('Coach', 'Coach Only'),
+    ('Admin', 'Admins Only')
+on conflict(value) do update set "description" = EXCLUDED."description"
+ 
 alter table "public"."match_options" add column "ready_setting" text
  not null default 'Players';
 
