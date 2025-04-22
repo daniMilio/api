@@ -6782,6 +6782,9 @@ export default {
             "total_server_count": [
                 4
             ],
+            "update_status": [
+                11
+            ],
             "__typename": [
                 11
             ]
@@ -7056,6 +7059,9 @@ export default {
             "total_server_count": [
                 5
             ],
+            "update_status": [
+                13
+            ],
             "__typename": [
                 11
             ]
@@ -7121,6 +7127,9 @@ export default {
             "token": [
                 11
             ],
+            "update_status": [
+                11
+            ],
             "__typename": [
                 11
             ]
@@ -7153,6 +7162,9 @@ export default {
             "total_server_count": [
                 4
             ],
+            "update_status": [
+                11
+            ],
             "__typename": [
                 11
             ]
@@ -7177,6 +7189,9 @@ export default {
                 1148
             ],
             "token": [
+                1148
+            ],
+            "update_status": [
                 1148
             ],
             "__typename": [
@@ -7211,6 +7226,9 @@ export default {
             "total_server_count": [
                 4
             ],
+            "update_status": [
+                11
+            ],
             "__typename": [
                 11
             ]
@@ -7235,6 +7253,9 @@ export default {
                 1148
             ],
             "token": [
+                1148
+            ],
+            "update_status": [
                 1148
             ],
             "__typename": [
@@ -7329,6 +7350,9 @@ export default {
             "total_server_count": [
                 1148
             ],
+            "update_status": [
+                1148
+            ],
             "__typename": [
                 11
             ]
@@ -7379,6 +7403,9 @@ export default {
                 105
             ],
             "token": [
+                11
+            ],
+            "update_status": [
                 11
             ],
             "__typename": [
@@ -7533,6 +7560,9 @@ export default {
                 105
             ],
             "token": [
+                11
+            ],
+            "update_status": [
                 11
             ],
             "__typename": [

@@ -13,6 +13,9 @@ import { NodeStats } from "./jobs/NodeStats";
 import { PodStats } from "./jobs/PodStats";
 import { RedisManagerService } from "src/redis/redis-manager/redis-manager.service";
 import { Redis } from "ioredis";
+import { LoggingServiceService } from "./logging-service/logging-service.service";
+import { PassThrough } from "stream";
+
 @Injectable()
 export class GameServerNodeService {
   private redis: Redis;
@@ -25,6 +28,7 @@ export class GameServerNodeService {
     protected readonly config: ConfigService,
     protected readonly hasura: HasuraService,
     redisManager: RedisManagerService,
+    protected readonly loggingService: LoggingServiceService,
   ) {
     this.gameServerConfig = this.config.get<GameServersConfig>("gameServers");
 
@@ -239,6 +243,13 @@ export class GameServerNodeService {
   private async updateCsServer(gameServerNodeId: string) {
     this.logger.log(`Updating CS2 on node ${gameServerNodeId}`);
 
+    const pod = await this.getUpdateJobPod(gameServerNodeId);
+
+    if (pod) {
+      await this.moitorUpdateStatus(gameServerNodeId);
+      return;
+    }
+
     const kc = new KubeConfig();
     kc.loadFromDefault();
 
@@ -308,12 +319,165 @@ export class GameServerNodeService {
           ttlSecondsAfterFinished: 30,
         },
       });
+
+      setTimeout(() => {
+        void this.moitorUpdateStatus(gameServerNodeId, 3);
+      }, 5000);
     } catch (error) {
       this.logger.error(
         `Error creating job for ${gameServerNodeId}`,
         error?.response?.body?.message || error,
       );
       throw error;
+    }
+  }
+
+  public async moitorUpdateStatus(gameServerNodeId: string, attempts = 0) {
+    try {
+      const pod = await this.getUpdateJobPod(gameServerNodeId);
+
+      if (!pod) {
+        console.warn("unable to find update job pod");
+        return;
+      }
+
+      const kc = new KubeConfig();
+      kc.loadFromDefault();
+
+      const coreV1Api = kc.makeApiClient(CoreV1Api);
+      const { body: logs } = await coreV1Api.readNamespacedPodLog(
+        pod.metadata.name,
+        this.namespace,
+      );
+
+      let currentType: string;
+      let currentPercentage = 0;
+
+      const { game_server_nodes_by_pk } = await this.hasura.query({
+        game_server_nodes_by_pk: {
+          __args: {
+            id: gameServerNodeId,
+          },
+          update_status: true,
+        },
+      });
+
+      let _currentStatus = game_server_nodes_by_pk?.update_status;
+
+      if (_currentStatus) {
+        const match = _currentStatus.match(/([^0-9]+) ([0-9.]+)/);
+        if (match) {
+          currentType = match[1].trim();
+          currentPercentage = parseFloat(match[2]);
+        }
+      }
+
+      const stream = new PassThrough();
+      this.loggingService.getLogsForPod(pod, stream);
+
+      stream.on("data", async (data) => {
+        const { log } = JSON.parse(data.toString());
+
+        if (!log) {
+          return;
+        }
+
+        const typeMatch = log.match(/Update state \(0x[0-9a-f]+\) ([^,]+)/);
+        const type = typeMatch ? typeMatch[1] : null;
+        let percentage = log.match(/progress: (\d+\.\d+)/)?.[1];
+
+        if (!percentage) {
+          return;
+        }
+
+        percentage = Math.round(parseFloat(percentage) * 100) / 100;
+
+        if (type === currentType && percentage < currentPercentage + 5) {
+          return;
+        }
+
+        currentType = type;
+        currentPercentage = percentage;
+
+        await this.hasura.mutation({
+          update_game_server_nodes_by_pk: {
+            __args: {
+              pk_columns: {
+                id: gameServerNodeId,
+              },
+              _set: {
+                update_status: `${type} ${percentage}%`,
+              },
+            },
+            update_status: true,
+          },
+        });
+      });
+
+      stream
+        .on("error", (error) => {
+          console.error("Update job error", error);
+        })
+        .on("close", async () => {
+          console.info("Update job closed");
+        });
+
+      stream.on("end", async () => {
+        console.info("Update job completed");
+        await this.hasura.mutation({
+          update_game_server_nodes_by_pk: {
+            __args: {
+              pk_columns: {
+                id: gameServerNodeId,
+              },
+              _set: {
+                update_status: null,
+              },
+            },
+            update_status: true,
+          },
+        });
+
+        console.info("Update job completed");
+      });
+    } catch (error) {
+      console.warn("unable to monitor update status", error);
+      if (attempts > 0) {
+        setTimeout(() => {
+          void this.moitorUpdateStatus(gameServerNodeId, attempts - 1);
+        }, 5000);
+      }
+    }
+  }
+
+  private async getUpdateJobPod(gameServerNodeId: string) {
+    try {
+      const kc = new KubeConfig();
+      kc.loadFromDefault();
+
+      const batchV1Api = kc.makeApiClient(BatchV1Api);
+
+      const { body: job } = await batchV1Api.readNamespacedJob(
+        `update-cs-server-${gameServerNodeId}`,
+        this.namespace,
+      );
+
+      const coreV1Api = kc.makeApiClient(CoreV1Api);
+
+      const { body: pods } = await coreV1Api.listNamespacedPod(
+        this.namespace,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        `job-name=${job.metadata.name}`,
+      );
+
+      return pods.items.at(0);
+    } catch (error) {
+      if (error?.response?.statusCode !== 404) {
+        throw error;
+      }
     }
   }
 

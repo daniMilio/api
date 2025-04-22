@@ -5206,6 +5206,7 @@ type game_server_nodes {
   A computed field, executes function "total_node_server_count"
   """
   total_server_count: Int
+  update_status: String
 }
 
 """
@@ -5337,6 +5338,7 @@ input game_server_nodes_bool_exp {
   status: e_game_server_node_statuses_enum_comparison_exp
   token: String_comparison_exp
   total_server_count: Int_comparison_exp
+  update_status: String_comparison_exp
 }
 
 """
@@ -5377,6 +5379,7 @@ input game_server_nodes_insert_input {
   start_port_range: Int
   status: e_game_server_node_statuses_enum
   token: String
+  update_status: String
 }
 
 """aggregate max on columns"""
@@ -5397,6 +5400,7 @@ type game_server_nodes_max_fields {
   A computed field, executes function "total_node_server_count"
   """
   total_server_count: Int
+  update_status: String
 }
 
 """
@@ -5410,6 +5414,7 @@ input game_server_nodes_max_order_by {
   region: order_by
   start_port_range: order_by
   token: order_by
+  update_status: order_by
 }
 
 """aggregate min on columns"""
@@ -5430,6 +5435,7 @@ type game_server_nodes_min_fields {
   A computed field, executes function "total_node_server_count"
   """
   total_server_count: Int
+  update_status: String
 }
 
 """
@@ -5443,6 +5449,7 @@ input game_server_nodes_min_order_by {
   region: order_by
   start_port_range: order_by
   token: order_by
+  update_status: order_by
 }
 
 """
@@ -5494,6 +5501,7 @@ input game_server_nodes_order_by {
   status: order_by
   token: order_by
   total_server_count: order_by
+  update_status: order_by
 }
 
 """primary key columns input for table: game_server_nodes"""
@@ -5540,6 +5548,9 @@ enum game_server_nodes_select_column {
 
   """column name"""
   token
+
+  """column name"""
+  update_status
 }
 
 """
@@ -5574,6 +5585,7 @@ input game_server_nodes_set_input {
   start_port_range: Int
   status: e_game_server_node_statuses_enum
   token: String
+  update_status: String
 }
 
 """aggregate stddev on columns"""
@@ -5676,6 +5688,7 @@ input game_server_nodes_stream_cursor_value_input {
   start_port_range: Int
   status: e_game_server_node_statuses_enum
   token: String
+  update_status: String
 }
 
 """aggregate sum on columns"""
@@ -5742,6 +5755,9 @@ enum game_server_nodes_update_column {
 
   """column name"""
   token
+
+  """column name"""
+  update_status
 }
 
 input game_server_nodes_updates {

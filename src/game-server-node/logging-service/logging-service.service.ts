@@ -41,7 +41,15 @@ export class LoggingServiceService {
 
     for (const pod of pods) {
       await Promise.all([
-        this.getLogsForPod(pod, archive, stream, download, previous, aborts),
+        this.getLogsForPod(
+          pod,
+          stream,
+          download,
+          previous,
+          250,
+          aborts,
+          archive,
+        ),
       ]);
     }
 
@@ -71,13 +79,14 @@ export class LoggingServiceService {
     return body.items;
   }
 
-  private async getLogsForPod(
+  public async getLogsForPod(
     pod: V1Pod,
-    archive: archiver.Archiver,
     stream: Writable,
-    download: boolean,
-    previous: boolean,
-    aborts: Array<() => void>,
+    download = false,
+    previous = false,
+    tailLines = 1,
+    aborts?: Array<() => void>,
+    archive?: archiver.Archiver,
   ) {
     let totalAdded = 0;
 
@@ -85,10 +94,12 @@ export class LoggingServiceService {
       const logStream = new PassThrough();
 
       logStream.on("end", () => {
+        this.logger.log("log stream ended");
         ++totalAdded;
         if (archive && totalAdded == pod.spec.containers.length) {
           void archive.finalize();
         }
+        stream.end();
       });
 
       logStream.on("data", (chunk: Buffer) => {
@@ -123,6 +134,11 @@ export class LoggingServiceService {
         }
       });
 
+      logStream.on("error", (error) => {
+        this.logger.error("Log stream error", error);
+        stream.end();
+      });
+
       if (archive) {
         archive.append(logStream, {
           name: `${container.name}.txt`,
@@ -137,17 +153,20 @@ export class LoggingServiceService {
         container.name,
         logStream,
         {
-          tailLines: 250,
           previous,
           pretty: false,
           timestamps: true,
           follow: download === false,
+          tailLines,
         },
       );
 
-      aborts.push(() => {
-        podLogs.abort();
-      });
+      if (aborts) {
+        aborts.push(() => {
+          stream.end();
+          podLogs.abort();
+        });
+      }
     }
   }
 }

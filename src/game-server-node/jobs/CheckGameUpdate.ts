@@ -6,6 +6,7 @@ import { Logger } from "@nestjs/common";
 import { GameServerNodeService } from "../game-server-node.service";
 import { HasuraService } from "src/hasura/hasura.service";
 import { NotificationsService } from "src/notifications/notifications.service";
+
 @UseQueue("GameServerNode", GameServerQueues.GameUpdate)
 export class CheckGameUpdate extends WorkerHost {
   constructor(

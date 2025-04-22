@@ -42,6 +42,7 @@ select_permissions:
         - region
         - start_port_range
         - status
+        - update_status
       computed_fields:
         - available_server_count
         - total_server_count
