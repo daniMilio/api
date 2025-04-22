@@ -31,6 +31,7 @@ export class RconService {
         },
         host: true,
         port: true,
+        label: true,
         region: true,
         rcon_status: true,
         rcon_password: true,
@@ -104,7 +105,7 @@ export class RconService {
         });
 
         this.notifications.send("DedicatedServerRconStatus", {
-          message: `Dedicated Server ${serverId} is not able to connect to the RCON.`,
+          message: `Dedicated Server (${server.label || serverId}) is not able to connect to the RCON.`,
           title: "Dedicated Server RCON Error",
           role: "administrator",
           entity_id: serverId,

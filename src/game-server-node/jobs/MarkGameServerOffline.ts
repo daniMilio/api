@@ -19,7 +19,7 @@ export class MarkGameServerOffline extends WorkerHost {
       serverId: string;
     }>,
   ): Promise<void> {
-    await this.hasura.mutation({
+    const { update_servers_by_pk } = await this.hasura.mutation({
       update_servers_by_pk: {
         __args: {
           pk_columns: {
@@ -29,12 +29,12 @@ export class MarkGameServerOffline extends WorkerHost {
             connected: false,
           },
         },
-        __typename: true,
+        label: true,
       },
     });
 
     this.notifications.send("DedicatedServerStatus", {
-      message: `Dedicated Server ${job.data.serverId} is Offline.`,
+      message: `Dedicated Server (${update_servers_by_pk.label || job.data.serverId}) is Offline.`,
       title: "Dedicated Server Offline",
       role: "administrator",
       entity_id: job.data.serverId,

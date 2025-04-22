@@ -69,9 +69,9 @@ export class NotificationsService {
         },
         body: JSON.stringify({
           content: new TurndownService().turndown(
-            `${discord_role_id ? ` <@&${discord_role_id.value}>,` : ""} ${notification.message}`,
+            `${discord_role_id ? ` <@&${discord_role_id.value}> ` : ""} ${notification.message}`,
           ),
-          username: "5stack Support",
+          username: "5stack",
         }),
       });
     }
