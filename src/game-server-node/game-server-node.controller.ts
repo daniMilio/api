@@ -9,7 +9,6 @@ import { GameServerQueues } from "./enums/GameServerQueues";
 import { Queue } from "bullmq";
 import { MarkGameServerOffline } from "./jobs/MarkGameServerOffline";
 import { ConfigService } from "@nestjs/config";
-import { GameServersConfig } from "../configs/types/GameServersConfig";
 import { AppConfig } from "../configs/types/AppConfig";
 import { Request, Response } from "express";
 import { LoggingServiceService } from "./logging-service/logging-service.service";
@@ -17,8 +16,6 @@ import { RconService } from "src/rcon/rcon.service";
 
 @Controller("game-server-node")
 export class GameServerNodeController {
-  private readonly namespace: string;
-  private gameServerConfig: GameServersConfig;
   private appConfig: AppConfig;
 
   constructor(
@@ -32,9 +29,6 @@ export class GameServerNodeController {
     @InjectQueue(GameServerQueues.GameUpdate) private queue: Queue,
   ) {
     this.appConfig = this.config.get<AppConfig>("app");
-    this.gameServerConfig = this.config.get<GameServersConfig>("gameServers");
-
-    this.namespace = this.gameServerConfig.namespace;
   }
 
   @HasuraAction()

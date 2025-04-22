@@ -88,26 +88,28 @@ export class RconService {
         });
       }
     } catch (error) {
-      this.hasuraService.mutation({
-        update_servers_by_pk: {
-          __args: {
-            pk_columns: {
-              id: serverId,
+      if (server.rcon_status) {
+        this.hasuraService.mutation({
+          update_servers_by_pk: {
+            __args: {
+              pk_columns: {
+                id: serverId,
+              },
+              _set: {
+                rcon_status: false,
+              },
             },
-            _set: {
-              rcon_status: false,
-            },
+            id: true,
           },
-          id: true,
-        },
-      });
+        });
 
-      this.notifications.send("DedicatedServerRconStatus", {
-        message: `Dedicated Server ${serverId} is not able to connect to the RCON.`,
-        title: "Dedicated Server RCON Error",
-        role: "administrator",
-        entity_id: serverId,
-      });
+        this.notifications.send("DedicatedServerRconStatus", {
+          message: `Dedicated Server ${serverId} is not able to connect to the RCON.`,
+          title: "Dedicated Server RCON Error",
+          role: "administrator",
+          entity_id: serverId,
+        });
+      }
 
       // TODO - we should return null here
       return rcon;
