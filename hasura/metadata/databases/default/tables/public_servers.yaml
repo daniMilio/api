@@ -52,6 +52,7 @@ select_permissions:
         - id
         - label
         - port
+        - rcon_status
         - region
         - tv_port
       computed_fields:
@@ -70,6 +71,7 @@ select_permissions:
         - id
         - label
         - port
+        - rcon_status
         - region
         - reserved_by_match_id
         - tv_port
@@ -89,6 +91,7 @@ select_permissions:
         - id
         - label
         - port
+        - rcon_status
         - region
         - reserved_by_match_id
         - tv_port

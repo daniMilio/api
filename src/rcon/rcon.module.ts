@@ -4,9 +4,10 @@ import { RconGateway } from "./rcon.gateway";
 import { HasuraModule } from "../hasura/hasura.module";
 import { loggerFactory } from "../utilities/LoggerFactory";
 import { EncryptionModule } from "../encryption/encryption.module";
+import { NotificationsModule } from "../notifications/notifications.module";
 
 @Module({
-  imports: [HasuraModule, EncryptionModule],
+  imports: [HasuraModule, EncryptionModule, NotificationsModule],
   exports: [RconService],
   providers: [RconGateway, RconService, loggerFactory()],
 })

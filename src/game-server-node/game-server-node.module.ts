@@ -19,6 +19,7 @@ import { MarkGameServerOffline } from "./jobs/MarkGameServerOffline";
 import { LoggingServiceService } from "./logging-service/logging-service.service";
 import { RedisModule } from "src/redis/redis.module";
 import { NotificationsModule } from "src/notifications/notifications.module";
+import { RconModule } from "src/rcon/rcon.module";
 
 @Module({
   providers: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from "src/notifications/notifications.module";
     HasuraModule,
     CacheModule,
     NotificationsModule,
+    RconModule,
     BullModule.registerQueue(
       {
         name: GameServerQueues.GameUpdate,

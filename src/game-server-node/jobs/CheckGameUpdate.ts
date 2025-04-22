@@ -52,10 +52,10 @@ export class CheckGameUpdate extends WorkerHost {
     ) {
       await this.cache.put("cs:updated-at", parseInt(publicBuild.timeupdated));
 
-      this.notifications.send("MatchSupport", {
+      this.notifications.send("GameUpdate", {
         message: `A CS2 Update (${publicBuild.buildid}) has been detected. The Game Node Servers will update automatically.`,
         title: "CS2 Update",
-        role: "administrator"
+        role: "administrator",
       });
 
       await this.gameServerNodeService.updateCs();

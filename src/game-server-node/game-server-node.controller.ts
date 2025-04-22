@@ -13,6 +13,7 @@ import { GameServersConfig } from "../configs/types/GameServersConfig";
 import { AppConfig } from "../configs/types/AppConfig";
 import { Request, Response } from "express";
 import { LoggingServiceService } from "./logging-service/logging-service.service";
+import { RconService } from "src/rcon/rcon.service";
 
 @Controller("game-server-node")
 export class GameServerNodeController {
@@ -22,6 +23,7 @@ export class GameServerNodeController {
 
   constructor(
     protected readonly logger: Logger,
+    protected readonly rcon: RconService,
     protected readonly config: ConfigService,
     protected readonly hasura: HasuraService,
     protected readonly tailscale: TailscaleService,
@@ -130,6 +132,7 @@ export class GameServerNodeController {
           id: serverId,
         },
         connected: true,
+        rcon_status: true,
         is_dedicated: true,
         current_match: {
           current_match_map_id: true,
@@ -158,6 +161,11 @@ export class GameServerNodeController {
       }
     }
 
+    let rconStatus = server.rcon_status;
+    if (server.is_dedicated && rconStatus == null) {
+      await this.rcon.testConnection(serverId);
+    }
+
     if (!server.connected) {
       await this.hasura.mutation({
         update_servers_by_pk: {
@@ -167,6 +175,7 @@ export class GameServerNodeController {
             },
             _set: {
               connected: true,
+              ...(rconStatus !== null && { rcon_status: rconStatus }),
             },
           },
           __typename: true,

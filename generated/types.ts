@@ -6711,6 +6711,9 @@ export default {
             "id": [
                 11
             ],
+            "label": [
+                11
+            ],
             "lan_ip": [
                 565
             ],
@@ -7020,6 +7023,9 @@ export default {
             "id": [
                 13
             ],
+            "label": [
+                13
+            ],
             "lan_ip": [
                 566
             ],
@@ -7088,6 +7094,9 @@ export default {
             "id": [
                 11
             ],
+            "label": [
+                11
+            ],
             "lan_ip": [
                 565
             ],
@@ -7129,6 +7138,9 @@ export default {
             "id": [
                 11
             ],
+            "label": [
+                11
+            ],
             "region": [
                 11
             ],
@@ -7153,6 +7165,9 @@ export default {
                 1148
             ],
             "id": [
+                1148
+            ],
+            "label": [
                 1148
             ],
             "region": [
@@ -7181,6 +7196,9 @@ export default {
             "id": [
                 11
             ],
+            "label": [
+                11
+            ],
             "region": [
                 11
             ],
@@ -7205,6 +7223,9 @@ export default {
                 1148
             ],
             "id": [
+                1148
+            ],
+            "label": [
                 1148
             ],
             "region": [
@@ -7278,6 +7299,9 @@ export default {
             "id": [
                 1148
             ],
+            "label": [
+                1148
+            ],
             "lan_ip": [
                 1148
             ],
@@ -7331,6 +7355,9 @@ export default {
                 4
             ],
             "id": [
+                11
+            ],
+            "label": [
                 11
             ],
             "lan_ip": [
@@ -7482,6 +7509,9 @@ export default {
                 4
             ],
             "id": [
+                11
+            ],
+            "label": [
                 11
             ],
             "lan_ip": [
@@ -30027,6 +30057,9 @@ export default {
             "rcon_password": [
                 76
             ],
+            "rcon_status": [
+                0
+            ],
             "region": [
                 11
             ],
@@ -30286,6 +30319,9 @@ export default {
             "rcon_password": [
                 77
             ],
+            "rcon_status": [
+                1
+            ],
             "region": [
                 13
             ],
@@ -30347,6 +30383,9 @@ export default {
             ],
             "rcon_password": [
                 76
+            ],
+            "rcon_status": [
+                0
             ],
             "region": [
                 11
@@ -30565,6 +30604,9 @@ export default {
             "rcon_password": [
                 1148
             ],
+            "rcon_status": [
+                1148
+            ],
             "region": [
                 1148
             ],
@@ -30616,6 +30658,9 @@ export default {
             ],
             "rcon_password": [
                 76
+            ],
+            "rcon_status": [
+                0
             ],
             "region": [
                 11
@@ -30734,6 +30779,9 @@ export default {
             ],
             "rcon_password": [
                 76
+            ],
+            "rcon_status": [
+                0
             ],
             "region": [
                 11

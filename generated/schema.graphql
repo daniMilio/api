@@ -2405,6 +2405,18 @@ enum e_notification_types_constraint {
 }
 
 enum e_notification_types_enum {
+  """DedicatedServerRconStatus"""
+  DedicatedServerRconStatus
+
+  """DedicatedServerStatus"""
+  DedicatedServerStatus
+
+  """GameNodeStatus"""
+  GameNodeStatus
+
+  """GameUpdate"""
+  GameUpdate
+
   """MatchSupport"""
   MatchSupport
 
@@ -5145,6 +5157,7 @@ type game_server_nodes {
   enabled: Boolean!
   end_port_range: Int
   id: String!
+  label: String
   lan_ip: inet
   node_ip: inet
   public_ip: inet
@@ -5313,6 +5326,7 @@ input game_server_nodes_bool_exp {
   enabled: Boolean_comparison_exp
   end_port_range: Int_comparison_exp
   id: String_comparison_exp
+  label: String_comparison_exp
   lan_ip: inet_comparison_exp
   node_ip: inet_comparison_exp
   public_ip: inet_comparison_exp
@@ -5354,6 +5368,7 @@ input game_server_nodes_insert_input {
   enabled: Boolean
   end_port_range: Int
   id: String
+  label: String
   lan_ip: inet
   node_ip: inet
   public_ip: inet
@@ -5373,6 +5388,7 @@ type game_server_nodes_max_fields {
   build_id: Int
   end_port_range: Int
   id: String
+  label: String
   region: String
   start_port_range: Int
   token: String
@@ -5390,6 +5406,7 @@ input game_server_nodes_max_order_by {
   build_id: order_by
   end_port_range: order_by
   id: order_by
+  label: order_by
   region: order_by
   start_port_range: order_by
   token: order_by
@@ -5404,6 +5421,7 @@ type game_server_nodes_min_fields {
   build_id: Int
   end_port_range: Int
   id: String
+  label: String
   region: String
   start_port_range: Int
   token: String
@@ -5421,6 +5439,7 @@ input game_server_nodes_min_order_by {
   build_id: order_by
   end_port_range: order_by
   id: order_by
+  label: order_by
   region: order_by
   start_port_range: order_by
   token: order_by
@@ -5465,6 +5484,7 @@ input game_server_nodes_order_by {
   enabled: order_by
   end_port_range: order_by
   id: order_by
+  label: order_by
   lan_ip: order_by
   node_ip: order_by
   public_ip: order_by
@@ -5496,6 +5516,9 @@ enum game_server_nodes_select_column {
 
   """column name"""
   id
+
+  """column name"""
+  label
 
   """column name"""
   lan_ip
@@ -5543,6 +5566,7 @@ input game_server_nodes_set_input {
   enabled: Boolean
   end_port_range: Int
   id: String
+  label: String
   lan_ip: inet
   node_ip: inet
   public_ip: inet
@@ -5644,6 +5668,7 @@ input game_server_nodes_stream_cursor_value_input {
   enabled: Boolean
   end_port_range: Int
   id: String
+  label: String
   lan_ip: inet
   node_ip: inet
   public_ip: inet
@@ -5693,6 +5718,9 @@ enum game_server_nodes_update_column {
 
   """column name"""
   id
+
+  """column name"""
+  label
 
   """column name"""
   lan_ip
@@ -18035,7 +18063,7 @@ type notifications {
   ): jsonb
   created_at: timestamptz!
   deleted_at: timestamptz
-  entity_id: String!
+  entity_id: String
   id: uuid!
   is_read: Boolean!
   message: String!
@@ -27899,6 +27927,7 @@ type servers {
   ): matches_aggregate!
   port: Int!
   rcon_password: bytea!
+  rcon_status: Boolean
   region: String!
   reserved_by_match_id: uuid
   tv_port: Int
@@ -28018,6 +28047,7 @@ input servers_bool_exp {
   matches_aggregate: matches_aggregate_bool_exp
   port: Int_comparison_exp
   rcon_password: bytea_comparison_exp
+  rcon_status: Boolean_comparison_exp
   region: String_comparison_exp
   reserved_by_match_id: uuid_comparison_exp
   tv_port: Int_comparison_exp
@@ -28062,6 +28092,7 @@ input servers_insert_input {
   matches: matches_arr_rel_insert_input
   port: Int
   rcon_password: bytea
+  rcon_status: Boolean
   region: String
   reserved_by_match_id: uuid
   tv_port: Int
@@ -28168,6 +28199,7 @@ input servers_order_by {
   matches_aggregate: matches_aggregate_order_by
   port: order_by
   rcon_password: order_by
+  rcon_status: order_by
   region: order_by
   reserved_by_match_id: order_by
   tv_port: order_by
@@ -28210,6 +28242,9 @@ enum servers_select_column {
   rcon_password
 
   """column name"""
+  rcon_status
+
+  """column name"""
   region
 
   """column name"""
@@ -28228,6 +28263,9 @@ enum servers_select_column_servers_aggregate_bool_exp_bool_and_arguments_columns
 
   """column name"""
   enabled
+
+  """column name"""
+  rcon_status
 }
 
 """
@@ -28239,6 +28277,9 @@ enum servers_select_column_servers_aggregate_bool_exp_bool_or_arguments_columns 
 
   """column name"""
   enabled
+
+  """column name"""
+  rcon_status
 }
 
 """
@@ -28254,6 +28295,7 @@ input servers_set_input {
   label: String
   port: Int
   rcon_password: bytea
+  rcon_status: Boolean
   region: String
   reserved_by_match_id: uuid
   tv_port: Int
@@ -28323,6 +28365,7 @@ input servers_stream_cursor_value_input {
   label: String
   port: Int
   rcon_password: bytea
+  rcon_status: Boolean
   region: String
   reserved_by_match_id: uuid
   tv_port: Int
@@ -28372,6 +28415,9 @@ enum servers_update_column {
 
   """column name"""
   rcon_password
+
+  """column name"""
+  rcon_status
 
   """column name"""
   region

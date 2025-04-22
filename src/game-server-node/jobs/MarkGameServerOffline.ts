@@ -3,10 +3,14 @@ import { GameServerQueues } from "../enums/GameServerQueues";
 import { Job } from "bullmq";
 import { HasuraService } from "../../hasura/hasura.service";
 import { UseQueue } from "../../utilities/QueueProcessors";
+import { NotificationsService } from "../../notifications/notifications.service";
 
 @UseQueue("GameServerNode", GameServerQueues.NodeOffline)
 export class MarkGameServerOffline extends WorkerHost {
-  constructor(protected readonly hasura: HasuraService) {
+  constructor(
+    protected readonly hasura: HasuraService,
+    protected readonly notifications: NotificationsService,
+  ) {
     super();
   }
 
@@ -27,6 +31,13 @@ export class MarkGameServerOffline extends WorkerHost {
         },
         __typename: true,
       },
+    });
+
+    this.notifications.send("DedicatedServerStatus", {
+      message: `Dedicated Server ${job.data.serverId} is Offline.`,
+      title: "Dedicated Server Offline",
+      role: "administrator",
+      entity_id: job.data.serverId,
     });
   }
 }
