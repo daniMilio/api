@@ -72,7 +72,7 @@ export class RconService {
 
     try {
       await rcon.connect();
-      if (server.rcon_status) {
+      if (!server.rcon_status) {
         this.hasuraService.mutation({
           update_servers_by_pk: {
             __args: {
