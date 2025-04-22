@@ -5,7 +5,7 @@ import { GameServerQueues } from "../enums/GameServerQueues";
 import { Logger } from "@nestjs/common";
 import { GameServerNodeService } from "../game-server-node.service";
 import { HasuraService } from "src/hasura/hasura.service";
-
+import { NotificationsService } from "src/notifications/notifications.service";
 @UseQueue("GameServerNode", GameServerQueues.GameUpdate)
 export class CheckGameUpdate extends WorkerHost {
   constructor(
@@ -13,6 +13,7 @@ export class CheckGameUpdate extends WorkerHost {
     protected readonly logger: Logger,
     protected readonly gameServerNodeService: GameServerNodeService,
     protected readonly hasuraService: HasuraService,
+    protected readonly notifications: NotificationsService,
   ) {
     super();
   }
@@ -50,6 +51,12 @@ export class CheckGameUpdate extends WorkerHost {
       latestBuildTime < parseInt(publicBuild.timeupdated)
     ) {
       await this.cache.put("cs:updated-at", parseInt(publicBuild.timeupdated));
+
+      this.notifications.send("MatchSupport", {
+        message: `A CS2 Update (${publicBuild.buildid}) has been detected. The Game Node Servers will update automatically.`,
+        title: "CS2 Update",
+        role: "administrator"
+      });
 
       await this.gameServerNodeService.updateCs();
     }

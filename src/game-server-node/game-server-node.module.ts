@@ -18,6 +18,7 @@ import { MatchServerMiddlewareMiddleware } from "../matches/match-server-middlew
 import { MarkGameServerOffline } from "./jobs/MarkGameServerOffline";
 import { LoggingServiceService } from "./logging-service/logging-service.service";
 import { RedisModule } from "src/redis/redis.module";
+import { NotificationsModule } from "src/notifications/notifications.module";
 
 @Module({
   providers: [
@@ -35,6 +36,7 @@ import { RedisModule } from "src/redis/redis.module";
     TailscaleModule,
     HasuraModule,
     CacheModule,
+    NotificationsModule,
     BullModule.registerQueue(
       {
         name: GameServerQueues.GameUpdate,

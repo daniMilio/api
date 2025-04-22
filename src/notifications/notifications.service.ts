@@ -16,7 +16,7 @@ export class NotificationsService {
       message: string;
       title: string;
       role: e_player_roles_enum;
-      entity_id: string;
+      entity_id?: string;
     },
     actions?: Array<{
       label: string;
