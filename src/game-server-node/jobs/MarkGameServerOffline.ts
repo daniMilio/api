@@ -30,8 +30,13 @@ export class MarkGameServerOffline extends WorkerHost {
           },
         },
         label: true,
+        is_dedicated: true,
       },
     });
+
+    if (!update_servers_by_pk.is_dedicated) {
+      return;
+    }
 
     this.notifications.send("DedicatedServerStatus", {
       message: `Dedicated Server (${update_servers_by_pk.label || job.data.serverId}) is Offline.`,

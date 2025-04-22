@@ -414,16 +414,7 @@ export class GameServerNodeService {
         });
       });
 
-      stream
-        .on("error", (error) => {
-          console.error("Update job error", error);
-        })
-        .on("close", async () => {
-          console.info("Update job closed");
-        });
-
       stream.on("end", async () => {
-        console.info("Update job completed");
         await this.hasura.mutation({
           update_game_server_nodes_by_pk: {
             __args: {
@@ -437,8 +428,6 @@ export class GameServerNodeService {
             update_status: true,
           },
         });
-
-        console.info("Update job completed");
       });
     } catch (error) {
       console.warn("unable to monitor update status", error);
