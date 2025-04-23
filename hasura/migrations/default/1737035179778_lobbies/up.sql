@@ -7,7 +7,7 @@ alter table "public"."lobbies"
   references "public"."e_lobby_access"
   ("value") on update cascade on delete restrict;
 
-CREATE TABLE "public"."lobby_players" ("lobby_id" uuid NOT NULL, "steam_id" bigint NOT NULL, "captain" boolean NOT NULL default false, "status" text NOT NULL DEFAULT 'Invite', "invited_by_steam_id" bigint, PRIMARY KEY ("steam_id", "lobby_id"), FOREIGN KEY ("steam_id") REFERENCES "public"."players"("steam_id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("lobby_id") REFERENCES "public"."lobbies"("id") ON UPDATE cascade ON DELETE cascade);
+CREATE TABLE "public"."lobby_players" ("lobby_id" uuid NOT NULL, "steam_id" bigint NOT NULL, "captain" boolean NOT NULL default false, "status" text NOT NULL DEFAULT 'Invited', "invited_by_steam_id" bigint, PRIMARY KEY ("steam_id", "lobby_id"), FOREIGN KEY ("steam_id") REFERENCES "public"."players"("steam_id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("lobby_id") REFERENCES "public"."lobbies"("id") ON UPDATE cascade ON DELETE cascade);
 
 CREATE TABLE "public"."e_lobby_player_status" ("value" text NOT NULL, "description" Text NOT NULL, PRIMARY KEY ("value") , UNIQUE ("value"));
 
