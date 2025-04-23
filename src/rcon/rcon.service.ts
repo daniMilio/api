@@ -33,6 +33,7 @@ export class RconService {
         port: true,
         label: true,
         region: true,
+        is_dedicated: true,
         rcon_status: true,
         rcon_password: true,
         game_server_node: {
@@ -73,7 +74,7 @@ export class RconService {
 
     try {
       await rcon.connect();
-      if (!server.rcon_status) {
+      if (!server.rcon_status && server.is_dedicated) {
         this.hasuraService.mutation({
           update_servers_by_pk: {
             __args: {
