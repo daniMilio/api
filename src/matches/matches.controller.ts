@@ -125,6 +125,7 @@ export class MatchesController {
             match_lineup_id: true,
             placeholder_name: true,
             player: {
+              name: true,
               is_banned: true,
               is_gagged: true,
               is_muted: true,
@@ -141,6 +142,7 @@ export class MatchesController {
             match_lineup_id: true,
             placeholder_name: true,
             player: {
+              name: true,
               is_banned: true,
               is_gagged: true,
               is_muted: true,
@@ -183,6 +185,7 @@ export class MatchesController {
     match.lineup_1.lineup_players = match.lineup_1.lineup_players.map(
       (player) => ({
         ...player,
+        name: player.player.name,
         is_banned: player.player.is_banned,
         is_gagged: player.player.is_gagged,
         is_muted: player.player.is_muted,
@@ -194,6 +197,7 @@ export class MatchesController {
     match.lineup_2.lineup_players = match.lineup_2.lineup_players.map(
       (player) => ({
         ...player,
+        name: player.player.name,
         is_banned: player.player.is_banned,
         is_gagged: player.player.is_gagged,
         is_muted: player.player.is_muted,
