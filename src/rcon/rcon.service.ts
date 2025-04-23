@@ -90,7 +90,7 @@ export class RconService {
         });
       }
     } catch (error) {
-      if (server.rcon_status) {
+      if (server.rcon_status && server.is_dedicated) {
         this.hasuraService.mutation({
           update_servers_by_pk: {
             __args: {
