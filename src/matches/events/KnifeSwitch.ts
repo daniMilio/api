@@ -35,6 +35,6 @@ export default class KnifeSwitch extends MatchEventProcessor<void> {
       },
     });
 
-    await this.matchAssistant.sendServerMatchId(this.matchId);
+    await this.matchAssistant.knifeSwitch(this.matchId);
   }
 }

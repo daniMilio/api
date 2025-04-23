@@ -66,6 +66,17 @@ export class MatchAssistantService {
     }
   }
 
+  public async knifeSwitch(matchId: string) {
+    try {
+      await this.command(matchId, `api_knife_switch`);
+    } catch (error) {
+      this.logger.warn(
+        `[${matchId}] unable to send knife switch to the server`,
+        error.message,
+      );
+    }
+  }
+
   public async uploadBackupRound(matchId: string, round: number) {
     try {
       await this.command(matchId, `upload_backup_round ${round}`);

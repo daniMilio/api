@@ -11,6 +11,7 @@ import { MatchEvents } from "./events";
 import MatchEventProcessor from "./events/abstracts/MatchEventProcessor";
 import { Logger } from "@nestjs/common";
 import { HasuraService } from "src/hasura/hasura.service";
+import { CacheService } from "src/cache/cache.service";
 
 export type FiveStackGameServerWebSocketClient = WebSocket.WebSocket & {
   id: string;
@@ -25,6 +26,7 @@ export class MatchEventsGateway {
     private readonly logger: Logger,
     private readonly moduleRef: ModuleRef,
     private readonly hasura: HasuraService,
+    private readonly cache: CacheService,
   ) {}
 
   async handleConnection(
@@ -78,6 +80,13 @@ export class MatchEventsGateway {
     @ConnectedSocket() client: WebSocket.WebSocket,
   ) {
     const { matchId, messageId } = message;
+
+    if (await this.cache.has(`match-event-${matchId}-${messageId}`)) {
+      return messageId;
+    }
+
+    await this.cache.put(`${matchId}-${messageId}`, true, 10);
+
     const { data, event } = message.data;
 
     const Processor = MatchEvents[event as keyof typeof MatchEvents];
