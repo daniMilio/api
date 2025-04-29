@@ -38,6 +38,10 @@ export class MarkGameServerOffline extends WorkerHost {
       return;
     }
 
+    if (process.env.DEV) {
+      return;
+    }
+
     this.notifications.send("DedicatedServerStatus", {
       message: `Dedicated Server (${update_servers_by_pk.label || job.data.serverId}) is Offline.`,
       title: "Dedicated Server Offline",

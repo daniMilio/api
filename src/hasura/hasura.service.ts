@@ -15,10 +15,12 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { PostgresService } from "../postgres/postgres.service";
+import { AppConfig } from "../configs/types/AppConfig";
 
 @Injectable()
 export class HasuraService {
   private config: HasuraConfig;
+  private appConfig: AppConfig;
 
   constructor(
     protected readonly logger: Logger,
@@ -26,6 +28,7 @@ export class HasuraService {
     protected readonly configService: ConfigService,
     protected readonly postgresService: PostgresService,
   ) {
+    this.appConfig = configService.get<AppConfig>("app");
     this.config = configService.get<HasuraConfig>("hasura");
   }
 
@@ -108,6 +111,15 @@ export class HasuraService {
     await this.apply(path.resolve("./hasura/functions"));
     await this.apply(path.resolve("./hasura/views"));
     await this.apply(path.resolve("./hasura/triggers"));
+
+    await this.updateSettings();
+  }
+
+  private async updateSettings() {
+    await this.postgresService.query(
+      "insert into settings (name, value) values ('demos_domain', $1) on conflict (name) do update set value = $1",
+      [this.appConfig.demosDomain],
+    );
   }
 
   private async applyMigrations(path: string): Promise<number> {
