@@ -89,7 +89,7 @@ computed_fields:
   - name: demos_download_url
     definition:
       function:
-        name: demo_download_url
+        name: match_map_demo_download_url
         schema: public
   - name: demos_total_size
     definition:
