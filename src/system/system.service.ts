@@ -129,8 +129,14 @@ export class SystemService {
   public async getLatestVersions(): Promise<Record<string, string>> {
     const registries = ["api", "web", "game-server-node"];
     const latestVersions: Record<string, string> = {};
+    var repo = "";
 
     for (const registry of registries) {
+      if(registry == "web"){
+        repo = "danimilio";
+      } else {
+        repo = "5stackgg"
+      }
       const data = await this.cache.remember<{
         service: string;
         latestVersion: string;
@@ -139,7 +145,7 @@ export class SystemService {
         async () => {
           const token = await this.getToken(registry);
           const latestManifestResponse = await fetch(
-            `https://ghcr.io/v2/5stackgg/${registry}/manifests/latest`,
+            `https://ghcr.io/v2/${repo}/${registry}/manifests/latest`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
