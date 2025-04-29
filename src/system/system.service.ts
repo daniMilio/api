@@ -132,7 +132,7 @@ export class SystemService {
     var repo = "";
 
     for (const registry of registries) {
-      if(registry == "web"){
+      if(registry == "web" || registry == "api"){
         repo = "danimilio";
       } else {
         repo = "5stackgg"
