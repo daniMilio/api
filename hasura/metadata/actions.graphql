@@ -52,6 +52,10 @@ type Query {
   getServiceStats: [PodStats]!
 }
 
+type Query {
+  telemetryStats: TelemetryStats!
+}
+
 type Mutation {
   joinLineup(
     match_id: String!
@@ -195,3 +199,6 @@ type PodStats {
   memory: MemoryStat
 }
 
+type TelemetryStats {
+  online: Int!
+}

@@ -161,6 +161,10 @@ type SuccessOutput {
   success: Boolean!
 }
 
+type TelemetryStats {
+  online: Int!
+}
+
 """
 columns and relationships of "_map_pool"
 """
@@ -26883,6 +26887,7 @@ type query_root {
 
   """fetch data from the table: "teams" using primary key columns"""
   teams_by_pk(id: uuid!): teams
+  telemetryStats: TelemetryStats!
 
   """An array relationship"""
   tournament_brackets(

@@ -14,7 +14,8 @@ type Modules =
   | "Postgres"
   | "System"
   | "TypeSense"
-  | "Matchmaking";
+  | "Matchmaking"
+  | "Telemetry";
 
 export const UseQueue = (module: Modules, queue: string): ClassDecorator => {
   return (target) => {

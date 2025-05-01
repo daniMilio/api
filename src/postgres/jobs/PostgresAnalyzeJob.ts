@@ -13,11 +13,11 @@ export class PostgresAnalyzeJob extends WorkerHost {
     super();
   }
   async process(): Promise<void> {
-    this.logger.debug("Running Analyze");
+    this.logger.log("Running Analyze");
 
     await this.postgres.query(`Analyze`);
 
-    this.logger.debug("Analyze Finished");
+    this.logger.log("Analyze Finished");
     return;
   }
 }

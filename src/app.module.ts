@@ -31,6 +31,8 @@ import { SystemModule } from "./system/system.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { ChatModule } from "./chat/chat.module";
 import { FriendsModule } from "./friends/friends.module";
+import { TelemetryModule } from "./telemetry/telemetry.module";
+import { ThrottlerModule } from "@nestjs/throttler";
 
 @Module({
   imports: [
@@ -49,6 +51,15 @@ import { FriendsModule } from "./friends/friends.module";
     RedisModule,
     PostgresModule,
     TailscaleModule,
+    // hack to allow throttling, but not for everything
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 0,
+          limit: 0,
+        },
+      ],
+    }),
     BullModule.forRootAsync({
       imports: [RedisModule],
       inject: [RedisManagerService],
@@ -81,6 +92,7 @@ import { FriendsModule } from "./friends/friends.module";
     NotificationsModule,
     ChatModule,
     FriendsModule,
+    TelemetryModule,
   ],
   providers: [loggerFactory()],
   controllers: [AppController, QuickConnectController],

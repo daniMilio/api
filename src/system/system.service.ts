@@ -37,7 +37,7 @@ export class SystemService {
       insert_settings_one: {
         __args: {
           object: {
-            name: "public.supports_game_server_nodes",
+            name: "supports_game_server_nodes",
             value: supportsGameServerNodes.toString(),
           },
           on_conflict: {

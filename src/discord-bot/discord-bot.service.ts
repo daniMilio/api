@@ -174,7 +174,7 @@ export class DiscordBotService {
 
       await this.login();
 
-      this.logger.debug("successfully reloaded application (/) interactions.");
+      this.logger.log("successfully reloaded application (/) interactions.");
     } catch (error) {
       this.logger.error(`unable to reload application (/) commands`, error);
     }
