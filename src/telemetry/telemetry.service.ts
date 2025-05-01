@@ -20,10 +20,10 @@ export class TelemetryService {
   }
 
   async send() {
-    // if (!(await this.isEnabled())) {
-    //   this.logger.log("telemetry is disabled");
-    //   return;
-    // }
+    if (!(await this.isEnabled())) {
+      this.logger.log("telemetry is disabled");
+      return;
+    }
 
     await fetch("https://5stack.gg/telemetry", {
       method: "POST",
