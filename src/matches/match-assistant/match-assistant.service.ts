@@ -298,7 +298,7 @@ export class MatchAssistantService {
       return false;
     }
 
-    this.logger.debug(`[${matchId}] assigning on dedicated server`);
+    this.logger.log(`[${matchId}] assigning on dedicated server`);
 
     await this.hasura.mutation({
       update_matches_by_pk: {
@@ -332,7 +332,7 @@ export class MatchAssistantService {
   }
 
   private async assignOnDemandServer(matchId: string): Promise<boolean> {
-    this.logger.debug(`[${matchId}] assigning on demand server`);
+    this.logger.log(`[${matchId}] assigning on demand server`);
 
     const { matches_by_pk: match } = await this.hasura.query({
       matches_by_pk: {
@@ -747,7 +747,7 @@ export class MatchAssistantService {
   }
 
   public async stopOnDemandServer(matchId: string, serverId: string) {
-    this.logger.debug(`[${matchId}] stopping match server`);
+    this.logger.log(`[${matchId}] stopping match server`);
 
     const jobName = MatchAssistantService.GetMatchServerJobId(matchId);
 

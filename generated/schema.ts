@@ -72,6 +72,11 @@ export interface SuccessOutput {
     __typename: 'SuccessOutput'
 }
 
+export interface TelemetryStats {
+    online: Scalars['Int']
+    __typename: 'TelemetryStats'
+}
+
 
 /** columns and relationships of "_map_pool" */
 export interface _map_pool {
@@ -7637,6 +7642,7 @@ export interface query_root {
     teams_aggregate: teams_aggregate
     /** fetch data from the table: "teams" using primary key columns */
     teams_by_pk: (teams | null)
+    telemetryStats: TelemetryStats
     /** An array relationship */
     tournament_brackets: tournament_brackets[]
     /** An aggregate relationship */
@@ -11631,6 +11637,12 @@ _similar?: (Scalars['String'] | null)}
 
 export interface SuccessOutputGenqlSelection{
     success?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface TelemetryStatsGenqlSelection{
+    online?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -26519,6 +26531,7 @@ export interface query_rootGenqlSelection{
     where?: (teams_bool_exp | null)} })
     /** fetch data from the table: "teams" using primary key columns */
     teams_by_pk?: (teamsGenqlSelection & { __args: {id: Scalars['uuid']} })
+    telemetryStats?: TelemetryStatsGenqlSelection
     /** An array relationship */
     tournament_brackets?: (tournament_bracketsGenqlSelection & { __args?: {
     /** distinct select on columns */
@@ -34630,6 +34643,14 @@ export type SubscriptionGenqlSelection = subscription_rootGenqlSelection
     export const isSuccessOutput = (obj?: { __typename?: any } | null): obj is SuccessOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSuccessOutput"')
       return SuccessOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TelemetryStats_possibleTypes: string[] = ['TelemetryStats']
+    export const isTelemetryStats = (obj?: { __typename?: any } | null): obj is TelemetryStats => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTelemetryStats"')
+      return TelemetryStats_possibleTypes.includes(obj.__typename)
     }
     
 

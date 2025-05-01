@@ -21,7 +21,7 @@ export class HasuraMaintenanceJob extends WorkerHost {
       `delete from hdb_catalog.event_log where delivered = true or created_at < now() - interval '1 days'`,
     );
 
-    this.logger.debug("Hasura Maintenance Finished");
+    this.logger.log("Hasura Maintenance Finished");
 
     return;
   }
