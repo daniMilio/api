@@ -472,7 +472,7 @@ export class MatchAssistantService {
                     env: [
                       {
                         name: "GAME_NODE_SERVER",
-                        value: true,
+                        value: "true",
                       },
                       ...(!map.workshop_map_id
                         ? [{ name: "DEFAULT_MAP", value: map.name }]
