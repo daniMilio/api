@@ -177,7 +177,7 @@ export class DemosController {
           object: {
             match_id: matchId,
             match_map_id: mapId,
-            file: demo,
+            file: `${matchId}/${mapId}/demos/${demo}`,
             size: request.body.size,
           },
         },

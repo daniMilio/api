@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.demo_download_url(match_map_demos public.match
         WHERE name = 'cloudflare_worker_url';
 
         IF worker_url IS NOT NULL THEN
-            RETURN CONCAT(worker_url, '/demo?matchId=', match_map_demos.match_id, '&mapId=', match_map_demos.match_map_id, '&file=', match_map_demos.file);
+            RETURN CONCAT(worker_url, '/demo?file=', match_map_demos.file);
         END IF;
 
         RETURN NULL;
