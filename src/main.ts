@@ -61,7 +61,10 @@ async function bootstrap() {
     },
   });
 
-  app.set("trust proxy", "loopback");
+  app.set("trust proxy", () => {
+    // TODO - trust proxy
+    return true;
+  });
 
   const systemService = app.get(SystemService);
   const redisManagerService = app.get(RedisManagerService);
