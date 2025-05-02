@@ -2817,9 +2817,6 @@ enum e_player_roles_enum {
 
   """Basic User"""
   user
-
-  """Verified User"""
-  verified_user
 }
 
 """
