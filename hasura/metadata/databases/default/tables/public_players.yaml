@@ -335,13 +335,14 @@ event_triggers:
         columns: '*'
       update:
         columns:
+          - avatar_url
+          - role
+          - profile_url
+          - country
+          - discord_id
           - steam_id
           - name
-          - profile_url
-          - avatar_url
-          - discord_id
-          - role
-          - country
+          - name_registered
     retry_conf:
       interval_sec: 10
       num_retries: 6

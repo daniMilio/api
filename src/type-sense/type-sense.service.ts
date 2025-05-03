@@ -44,9 +44,7 @@ export class TypeSenseService {
             infix: true,
           },
           { name: "steam_id", type: "string", index: true },
-          { name: "avatar_url", type: "string", optional: true },
           { name: "teams", type: "string[]", optional: true },
-          { name: "elo", type: "int32", optional: true },
         ],
         default_sorting_field: "name",
       });
@@ -61,6 +59,7 @@ export class TypeSenseService {
         },
         elo: true,
         name: true,
+        role: true,
         country: true,
         avatar_url: true,
         is_banned: true,
