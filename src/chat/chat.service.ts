@@ -6,23 +6,11 @@ import { HasuraService } from "../hasura/hasura.service";
 import { RconService } from "../rcon/rcon.service";
 import { FiveStackWebSocketClient } from "src/sockets/types/FiveStackWebSocketClient";
 import { ChatLobbyType } from "./enums/ChatLobbyTypes";
+
 @Injectable()
 export class ChatService {
   private redis: Redis;
-  /**
-   * TODO - put into redis ratehr than here because it wont scale
-   */
-  private lobbies: Record<
-    string,
-    Map<
-      string,
-      {
-        user: User;
-        inGame?: Boolean;
-        sessions: Array<FiveStackWebSocketClient>;
-      }
-    >
-  > = {};
+  private sessions: Map<string, FiveStackWebSocketClient[]> = new Map();
 
   constructor(
     private readonly logger: Logger,
@@ -86,13 +74,18 @@ export class ChatService {
       default:
         console.warn(`Unknown lobby type: ${type}`);
         return;
-        break;
     }
 
-    const userData = this.addUserToLobby(id, client.user, false);
+    const userData = await this.addUserToLobby(type, id, client.user, false);
 
-    if (userData.sessions.length === 0) {
-      this.to(ChatLobbyType.Match, id, "joined", {
+    if (!this.sessions.has(client.user.steam_id)) {
+      this.sessions.set(client.user.steam_id, []);
+    }
+
+    const userSessions = this.sessions.get(client.user.steam_id);
+
+    if (userSessions.length === 0) {
+      this.to(type, id, "joined", {
         user: {
           ...userData.user,
           inGame: userData.inGame,
@@ -100,24 +93,20 @@ export class ChatService {
       });
     }
 
-    if (userData.sessions.includes(client)) {
-      return;
+    if (!userSessions.includes(client)) {
+      userSessions.push(client);
     }
 
-    userData.sessions.push(client);
+    const allUsers = await this.getAllUsersInLobby(type, id);
 
     client.send(
       JSON.stringify({
         event: `lobby:${type}:${id}:list`,
         data: {
-          lobby: Array.from(this.lobbies[id].values()).map(
-            ({ user, inGame }) => {
-              return {
-                inGame,
-                ...user,
-              };
-            },
-          ),
+          lobby: allUsers.map(({ user, inGame }) => ({
+            inGame,
+            ...user,
+          })),
         },
       }),
     );
@@ -155,13 +144,14 @@ export class ChatService {
     skipCheck = false,
   ) {
     // verify they are in the lobby
-    if (skipCheck === false && !this.lobbies[id]?.get(player.steam_id)) {
-      return;
+    if (skipCheck === false) {
+      const userData = await this.getUserData(type, id, player.steam_id);
+      if (!userData) {
+        return;
+      }
     }
 
     const timestamp = new Date();
-
-    // TODO - we should fetch the user on the UI instead
     const message = {
       message: _message,
       timestamp: timestamp.toISOString(),
@@ -191,22 +181,18 @@ export class ChatService {
     this.to(type, id, "chat", message);
   }
 
-  public to(
+  public async to(
     type: ChatLobbyType,
     id: string,
     event: "chat" | "list" | "messages" | "joined" | "left",
     data: Record<string, any>,
     sender?: FiveStackWebSocketClient,
   ) {
-    // TODO - genericize this
-    const clients = this.lobbies?.[id];
+    const users = await this.getAllUsersInLobby(type, id);
 
-    if (!clients) {
-      return;
-    }
-
-    for (const [, userData] of clients) {
-      for (const session of userData.sessions) {
+    for (const { steamId } of users) {
+      const sessions = this.sessions.get(steamId) || [];
+      for (const session of sessions) {
         if (sender === session) {
           continue;
         }
@@ -223,39 +209,38 @@ export class ChatService {
     }
   }
 
-  public removeFromLobby(
+  public async removeFromLobby(
     type: ChatLobbyType,
     id: string,
     client: FiveStackWebSocketClient,
   ) {
-    const userData = this.lobbies[id]?.get(client.user.steam_id);
-
+    const userData = await this.getUserData(type, id, client.user.steam_id);
     if (!userData) {
       return;
     }
 
-    userData.sessions = userData.sessions
-      ? userData.sessions.filter((_client) => {
-          return _client !== client;
-        })
-      : [];
+    const sessions = this.sessions.get(client.user.steam_id) || [];
+    const updatedSessions = sessions.filter((session) => session !== client);
+
+    if (updatedSessions.length === 0) {
+      this.sessions.delete(client.user.steam_id);
+      await this.removeUserData(type, id, client.user.steam_id);
+      this.to(type, id, "left", {
+        user: {
+          ...userData.user,
+          inGame: userData.inGame,
+        },
+      });
+      return;
+    }
+
+    this.sessions.set(client.user.steam_id, updatedSessions);
 
     if (userData.inGame) {
       this.to(type, id, "joined", {
         user: {
           ...userData.user,
           inGame: userData.inGame,
-        },
-      });
-
-      return;
-    }
-
-    if (userData.sessions.length === 0) {
-      this.lobbies[id].delete(client.user.steam_id);
-      this.to(type, id, "left", {
-        user: {
-          steam_id: client.user.steam_id,
         },
       });
     }
@@ -310,7 +295,12 @@ export class ChatService {
       },
     });
 
-    const userData = this.addUserToLobby(matchId, player, true);
+    const userData = await this.addUserToLobby(
+      ChatLobbyType.Match,
+      matchId,
+      player,
+      true,
+    );
 
     this.to(ChatLobbyType.Match, matchId, "joined", {
       user: {
@@ -321,13 +311,20 @@ export class ChatService {
   }
 
   public async leaveLobbyViaGame(matchId: string, steamId: string) {
-    const userData = this.lobbies[matchId].get(steamId);
-
-    if (userData) {
-      userData.inGame = false;
+    const userData = await this.getUserData(
+      ChatLobbyType.Match,
+      matchId,
+      steamId,
+    );
+    if (!userData) {
+      return;
     }
 
-    if (userData.sessions.length > 0) {
+    userData.inGame = false;
+    await this.setUserData(ChatLobbyType.Match, matchId, steamId, userData);
+
+    const sessions = this.sessions.get(steamId) || [];
+    if (sessions.length > 0) {
       this.to(ChatLobbyType.Match, matchId, "joined", {
         user: {
           ...userData.user,
@@ -337,7 +334,7 @@ export class ChatService {
       return;
     }
 
-    this.lobbies[matchId].delete(steamId);
+    await this.removeUserData(ChatLobbyType.Match, matchId, steamId);
 
     this.to(ChatLobbyType.Match, matchId, "left", {
       user: {
@@ -346,25 +343,65 @@ export class ChatService {
     });
   }
 
-  private addUserToLobby(matchId: string, user: User, game: boolean) {
-    if (!this.lobbies[matchId]) {
-      this.lobbies[matchId] = new Map();
-    }
-
-    let userData = this.lobbies[matchId].get(user.steam_id);
+  private async addUserToLobby(
+    type: ChatLobbyType,
+    id: string,
+    user: User,
+    game: boolean,
+  ) {
+    let userData = await this.getUserData(type, id, user.steam_id);
 
     if (!userData) {
       userData = {
         user,
-        sessions: [],
       };
-      this.lobbies[matchId].set(user.steam_id, userData);
     }
 
     if (game) {
       userData.inGame = true;
     }
 
+    await this.setUserData(type, id, user.steam_id, userData);
+
     return userData;
+  }
+
+  private getLobbyKey(type: ChatLobbyType, id: string): string {
+    return `lobby:${type}:${id}`;
+  }
+
+  private async getUserData(type: ChatLobbyType, id: string, steamId: string) {
+    const lobbyKey = this.getLobbyKey(type, id);
+    const userData = await this.redis.hget(lobbyKey, steamId);
+    return userData ? JSON.parse(userData) : null;
+  }
+
+  private async setUserData(
+    type: ChatLobbyType,
+    id: string,
+    steamId: string,
+    data: any,
+  ) {
+    const lobbyKey = this.getLobbyKey(type, id);
+    await this.redis.hset(lobbyKey, steamId, JSON.stringify(data));
+    await this.redis.expire(lobbyKey, 60 * 60 * 24);
+  }
+
+  private async removeUserData(
+    type: ChatLobbyType,
+    id: string,
+    steamId: string,
+  ) {
+    const lobbyKey = this.getLobbyKey(type, id);
+    await this.redis.hdel(lobbyKey, steamId);
+  }
+
+  private async getAllUsersInLobby(type: ChatLobbyType, id: string) {
+    const lobbyKey = this.getLobbyKey(type, id);
+    const users = await this.redis.hgetall(lobbyKey);
+    return Object.entries(users).map(([steamId, data]) => ({
+      steamId,
+      ...JSON.parse(data),
+    }));
   }
 }
