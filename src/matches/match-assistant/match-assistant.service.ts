@@ -232,6 +232,17 @@ export class MatchAssistantService {
       },
     });
 
+    if (match.options.prefer_dedicated_server) {
+      const assignedDedicated = await this.assignDedicatedServer(
+        match.id,
+        match.region,
+      );
+
+      if (assignedDedicated) {
+        return true;
+      }
+    }
+
     const { game_server_nodes } = await this.hasura.query({
       game_server_nodes: {
         __args: {
@@ -251,18 +262,20 @@ export class MatchAssistantService {
       },
     });
 
-    if (
-      game_server_nodes.length === 0 ||
-      match.options.prefer_dedicated_server
-    ) {
-      const assigned = await this.assignDedicatedServer(match.id, match.region);
+    if (game_server_nodes.length > 0) {
+      const isAssignedOnDemand = await this.assignOnDemandServer(matchId);
 
-      if (assigned) {
+      if (isAssignedOnDemand) {
         return true;
       }
     }
 
-    return await this.assignOnDemandServer(matchId);
+    // we already checked above, so we can skip trying to assign again
+    if (match.options.prefer_dedicated_server) {
+      return false;
+    }
+
+    return await this.assignDedicatedServer(match.id, match.region);
   }
 
   private async assignDedicatedServer(
