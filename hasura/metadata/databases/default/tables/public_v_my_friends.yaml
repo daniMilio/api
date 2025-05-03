@@ -31,6 +31,7 @@ select_permissions:
         - country
         - created_at
         - discord_id
+        - elo
         - invited_by_steam_id
         - name
         - name_registered

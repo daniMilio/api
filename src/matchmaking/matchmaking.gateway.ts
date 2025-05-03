@@ -41,7 +41,6 @@ export class MatchmakingGateway {
     },
     @ConnectedSocket() client: FiveStackWebSocketClient,
   ) {
-
     const { settings } = await this.hasura.query({
       settings: {
         __args: {
@@ -58,7 +57,7 @@ export class MatchmakingGateway {
                 },
               },
             ],
-          }
+          },
         },
         name: true,
         value: true,
@@ -69,7 +68,7 @@ export class MatchmakingGateway {
       (setting) => setting.name === "public.matchmaking",
     );
 
-    if(matchmakingEnabled && matchmakingEnabled.value === "false") {
+    if (matchmakingEnabled && matchmakingEnabled.value === "false") {
       throw new JoinQueueError("Matchmaking is disabled");
     }
 
@@ -77,7 +76,13 @@ export class MatchmakingGateway {
       (setting) => setting.name === "public.matchmaking_min_role",
     );
 
-    if(matchmakingMinRole && !isRoleAbove(client.user.role, matchmakingMinRole.value as e_player_roles_enum)) {
+    if (
+      matchmakingMinRole &&
+      !isRoleAbove(
+        client.user.role,
+        matchmakingMinRole.value as e_player_roles_enum,
+      )
+    ) {
       throw new JoinQueueError("You do not have permission to join this queue");
     }
 
