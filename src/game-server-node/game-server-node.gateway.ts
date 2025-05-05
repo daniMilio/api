@@ -1,25 +1,69 @@
+import Redis from "ioredis";
 import WebSocket from "ws";
 import { Queue } from "bullmq";
+import type { Request } from "express";
 import { InjectQueue } from "@nestjs/bullmq";
-import { CacheService } from "../cache/cache.service";
-import { HasuraService } from "../hasura/hasura.service";
 import { GameServerQueues } from "./enums/GameServerQueues";
 import { GameServerNodeService } from "./game-server-node.service";
-import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  ConnectedSocket,
+  MessageBody,
+} from "@nestjs/websockets";
 import { MarkGameServerNodeOffline } from "./jobs/MarkGameServerNodeOffline";
 import { NodeStats } from "./jobs/NodeStats";
 import { PodStats } from "./jobs/PodStats";
+import { RedisManagerService } from "src/redis/redis-manager/redis-manager.service";
+import { Logger } from "@nestjs/common";
+import { PeerSignalData } from "src/signal-server/types/SignalData";
 
 @WebSocketGateway(5586, {
   path: "/ws",
 })
 export class GameServerNodeGateway {
+  public redis: Redis;
+  private clients: Map<string, WebSocket> = new Map();
+
   constructor(
-    protected readonly cache: CacheService,
-    protected readonly hasura: HasuraService,
-    protected readonly gameServerNodeService: GameServerNodeService,
-    @InjectQueue(GameServerQueues.NodeOffline) private queue: Queue,
-  ) {}
+    private readonly logger: Logger,
+    private readonly redisManager: RedisManagerService,
+    private readonly gameServerNodeService: GameServerNodeService,
+    @InjectQueue(GameServerQueues.NodeOffline) private readonly queue: Queue,
+  ) {
+    this.redis = this.redisManager.getConnection();
+    const sub = this.redisManager.getConnection("sub");
+
+    sub.subscribe("send-message-to-node-ip");
+    sub.on("message", (channel: string, message: string) => {
+      const { nodeIp, event, data } = JSON.parse(message) as {
+        nodeIp: string;
+        event: string;
+        data: unknown;
+      };
+
+      switch (channel) {
+        case "send-message-to-node-ip":
+          this.sendMessageToGameServerNode(nodeIp, event, data);
+          break;
+      }
+    });
+  }
+
+  @SubscribeMessage("connection")
+  private async handleConnection(
+    @ConnectedSocket() client: WebSocket & { id: string },
+    request: Request,
+  ): Promise<void> {
+    const nodeId = request.headers["x-node-ip"] as string;
+    if (!nodeId) return;
+
+    this.clients.set(nodeId, client);
+
+    client.on("close", async () => {
+      this.clients.delete(nodeId);
+    });
+  }
 
   @SubscribeMessage("message")
   public async handleMessage(
@@ -77,6 +121,58 @@ export class GameServerNodeGateway {
         removeOnComplete: true,
         jobId,
       },
+    );
+  }
+
+  @SubscribeMessage("answer")
+  public async handleAnswer(
+    @MessageBody()
+    data: PeerSignalData,
+  ) {
+    this.handleIceCandidate(data);
+  }
+
+  @SubscribeMessage("candidate")
+  public async handleIceCandidate(
+    @MessageBody()
+    data: PeerSignalData,
+  ) {
+    const { peerId, clientId, signal } = data;
+
+    if (!peerId || !clientId) {
+      this.logger.error("No peerId or clientId found");
+      return;
+    }
+
+    await this.redis.publish(
+      `send-message-to-client`,
+      JSON.stringify({
+        clientId,
+        event: "candidate",
+        data: {
+          peerId,
+          signal,
+        },
+      }),
+    );
+  }
+
+  private async sendMessageToGameServerNode(
+    nodeIP: string,
+    event: string,
+    data: unknown,
+  ): Promise<void> {
+    const client = this.clients.get(nodeIP);
+
+    if (!client) {
+      return;
+    }
+
+    client.send(
+      JSON.stringify({
+        event,
+        data,
+      }),
     );
   }
 }

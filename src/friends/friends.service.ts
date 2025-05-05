@@ -40,10 +40,6 @@ export class FriendsService {
       },
     });
 
-    console.info({
-      players,
-    });
-
     for (const player of players) {
       await this.hasura.mutation({
         insert_friends: {
