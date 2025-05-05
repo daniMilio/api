@@ -33,6 +33,7 @@ import { ChatModule } from "./chat/chat.module";
 import { FriendsModule } from "./friends/friends.module";
 import { TelemetryModule } from "./telemetry/telemetry.module";
 import { ThrottlerModule } from "@nestjs/throttler";
+import { SignalServerModule } from "./signal-server/signal-server.module";
 
 @Module({
   imports: [
@@ -93,6 +94,7 @@ import { ThrottlerModule } from "@nestjs/throttler";
     ChatModule,
     FriendsModule,
     TelemetryModule,
+    SignalServerModule,
   ],
   providers: [loggerFactory()],
   controllers: [AppController, QuickConnectController],

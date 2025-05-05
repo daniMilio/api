@@ -16,6 +16,7 @@ import { ConfigService } from "@nestjs/config";
 import { FiveStackWebSocketClient } from "./types/FiveStackWebSocketClient";
 import { MatchmakeService } from "src/matchmaking/matchmake.service";
 import { MatchmakingLobbyService } from "src/matchmaking/matchmaking-lobby.service";
+import { Logger } from "@nestjs/common";
 
 @WebSocketGateway({
   path: "/ws/web",
@@ -55,6 +56,7 @@ export class SocketsGateway {
   }
 
   constructor(
+    private readonly logger: Logger,
     private readonly config: ConfigService,
     private readonly matchmaking: MatchmakeService,
     private readonly redisManager: RedisManagerService,
@@ -66,10 +68,12 @@ export class SocketsGateway {
     const sub = this.redisManager.getConnection("sub");
 
     sub.subscribe("broadcast-message");
+    sub.subscribe("send-message-to-client");
     sub.subscribe("send-message-to-steam-id");
     sub.on("message", (channel, message) => {
-      const { steamId, event, data } = JSON.parse(message) as {
+      const { steamId, clientId, event, data } = JSON.parse(message) as {
         steamId: string;
+        clientId: string;
         event: string;
         data: unknown;
       };
@@ -78,8 +82,11 @@ export class SocketsGateway {
         case "broadcast-message":
           this.broadcastMessage(event, data);
           break;
+        case "send-message-to-client":
+          this.sendMessageToClient(clientId, event, data);
+          break;
         case "send-message-to-steam-id":
-          this.sendMessageToClient(steamId, event, data);
+          this.sendMessageToSteamId(steamId, event, data);
           break;
       }
     });
@@ -214,6 +221,21 @@ export class SocketsGateway {
   }
 
   private async sendMessageToClient(
+    clientId: string,
+    event: string,
+    data: unknown,
+  ) {
+    const client = this.clients.get(clientId);
+
+    if (!client) {
+      this.logger.warn(`Client not found: ${clientId}`);
+      return;
+    }
+
+    client.send(JSON.stringify({ event, data }));
+  }
+
+  private async sendMessageToSteamId(
     steamId: string,
     event: string,
     data: unknown,
