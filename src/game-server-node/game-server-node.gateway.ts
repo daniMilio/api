@@ -74,6 +74,8 @@ export class GameServerNodeGateway {
       nodeIP: string;
       publicIP: string;
       csBuild: number;
+      supportsLowLatency: boolean;
+      supportsCpuPinning: boolean;
       nodeStats: NodeStats;
       podStats: Array<PodStats>;
       labels: Record<string, string>;
@@ -89,6 +91,8 @@ export class GameServerNodeGateway {
       payload.lanIP,
       payload.publicIP,
       payload.csBuild,
+      payload.supportsCpuPinning,
+      payload.supportsLowLatency,
       "Online",
     );
 
@@ -115,7 +119,7 @@ export class GameServerNodeGateway {
         node: payload.node,
       },
       {
-        delay: 65 * 1000,
+        delay: 90 * 1000,
         attempts: 1,
         removeOnFail: false,
         removeOnComplete: true,
