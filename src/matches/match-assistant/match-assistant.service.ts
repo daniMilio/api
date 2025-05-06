@@ -460,16 +460,39 @@ export class MatchAssistantService {
 
         let cpus: string;
         if (server.game_server_node?.supports_cpu_pinning) {
-          const { settings_by_pk: cpuPinning } = await this.hasura.query({
-            settings_by_pk: {
+          const { settings } = await this.hasura.query({
+            settings: {
               __args: {
-                name: "number_of_cpus_per_server",
+                where: {
+                  _or: [
+                    {
+                      name: {
+                        _eq: "enable_cpu_pinning",
+                      },
+                    },
+                    {
+                      name: {
+                        _eq: "number_of_cpus_per_server",
+                      },
+                    },
+                  ],
+                },
               },
+              name: true,
               value: true,
             },
           });
 
-          cpus = cpuPinning?.value || "2";
+          const cpuPinning = settings.find(
+            (setting) => setting.name === "enable_cpu_pinning",
+          );
+
+          if (cpuPinning?.value === "true") {
+            const numberOfCpus = settings.find(
+              (setting) => setting.name === "number_of_cpus_per_server",
+            );
+            cpus = numberOfCpus?.value || "2";
+          }
         }
 
         await batch.createNamespacedJob(this.namespace, {
