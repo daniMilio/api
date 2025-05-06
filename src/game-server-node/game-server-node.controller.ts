@@ -185,7 +185,7 @@ export class GameServerNodeController {
         serverId,
       },
       {
-        delay: 60 * 1000,
+        delay: 90 * 1000,
         attempts: 1,
         removeOnFail: false,
         removeOnComplete: true,
