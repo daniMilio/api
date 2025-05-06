@@ -6784,6 +6784,12 @@ export default {
             "status": [
                 106
             ],
+            "supports_cpu_pinning": [
+                0
+            ],
+            "supports_low_latency": [
+                0
+            ],
             "token": [
                 11
             ],
@@ -7061,6 +7067,12 @@ export default {
             "status": [
                 107
             ],
+            "supports_cpu_pinning": [
+                1
+            ],
+            "supports_low_latency": [
+                1
+            ],
             "token": [
                 13
             ],
@@ -7131,6 +7143,12 @@ export default {
             ],
             "status": [
                 106
+            ],
+            "supports_cpu_pinning": [
+                0
+            ],
+            "supports_low_latency": [
+                0
             ],
             "token": [
                 11
@@ -7352,6 +7370,12 @@ export default {
             "status": [
                 1149
             ],
+            "supports_cpu_pinning": [
+                1149
+            ],
+            "supports_low_latency": [
+                1149
+            ],
             "token": [
                 1149
             ],
@@ -7409,6 +7433,12 @@ export default {
             ],
             "status": [
                 106
+            ],
+            "supports_cpu_pinning": [
+                0
+            ],
+            "supports_low_latency": [
+                0
             ],
             "token": [
                 11
@@ -7566,6 +7596,12 @@ export default {
             ],
             "status": [
                 106
+            ],
+            "supports_cpu_pinning": [
+                0
+            ],
+            "supports_low_latency": [
+                0
             ],
             "token": [
                 11
@@ -18516,6 +18552,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -18717,6 +18756,9 @@ export default {
             ]
         },
         "my_friends_avg_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -18731,6 +18773,9 @@ export default {
             ]
         },
         "my_friends_avg_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -18766,6 +18811,9 @@ export default {
             "discord_id": [
                 13
             ],
+            "elo": [
+                1148
+            ],
             "friend_steam_id": [
                 76
             ],
@@ -18798,6 +18846,9 @@ export default {
             ]
         },
         "my_friends_inc_input": {
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -18823,6 +18874,9 @@ export default {
             ],
             "discord_id": [
                 11
+            ],
+            "elo": [
+                1147
             ],
             "friend_steam_id": [
                 75
@@ -18868,6 +18922,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -18904,6 +18961,9 @@ export default {
                 1149
             ],
             "discord_id": [
+                1149
+            ],
+            "elo": [
                 1149
             ],
             "friend_steam_id": [
@@ -18944,6 +19004,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -18980,6 +19043,9 @@ export default {
                 1149
             ],
             "discord_id": [
+                1149
+            ],
+            "elo": [
                 1149
             ],
             "friend_steam_id": [
@@ -19031,6 +19097,9 @@ export default {
             "discord_id": [
                 1149
             ],
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19078,6 +19147,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -19107,6 +19179,9 @@ export default {
             ]
         },
         "my_friends_stddev_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19121,6 +19196,9 @@ export default {
             ]
         },
         "my_friends_stddev_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19135,6 +19213,9 @@ export default {
             ]
         },
         "my_friends_stddev_pop_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19149,6 +19230,9 @@ export default {
             ]
         },
         "my_friends_stddev_pop_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19163,6 +19247,9 @@ export default {
             ]
         },
         "my_friends_stddev_samp_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19177,6 +19264,9 @@ export default {
             ]
         },
         "my_friends_stddev_samp_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19214,6 +19304,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -19243,6 +19336,9 @@ export default {
             ]
         },
         "my_friends_sum_fields": {
+            "elo": [
+                1147
+            ],
             "friend_steam_id": [
                 75
             ],
@@ -19257,6 +19353,9 @@ export default {
             ]
         },
         "my_friends_sum_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19285,6 +19384,9 @@ export default {
             ]
         },
         "my_friends_var_pop_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19299,6 +19401,9 @@ export default {
             ]
         },
         "my_friends_var_pop_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19313,6 +19418,9 @@ export default {
             ]
         },
         "my_friends_var_samp_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19327,6 +19435,9 @@ export default {
             ]
         },
         "my_friends_var_samp_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
@@ -19341,6 +19452,9 @@ export default {
             ]
         },
         "my_friends_variance_fields": {
+            "elo": [
+                3
+            ],
             "friend_steam_id": [
                 3
             ],
@@ -19355,6 +19469,9 @@ export default {
             ]
         },
         "my_friends_variance_order_by": {
+            "elo": [
+                1149
+            ],
             "friend_steam_id": [
                 1149
             ],
