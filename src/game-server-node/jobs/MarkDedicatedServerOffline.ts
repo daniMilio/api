@@ -6,7 +6,7 @@ import { UseQueue } from "../../utilities/QueueProcessors";
 import { NotificationsService } from "../../notifications/notifications.service";
 
 @UseQueue("GameServerNode", GameServerQueues.NodeOffline)
-export class MarkGameServerOffline extends WorkerHost {
+export class MarkDedicatedServerOffline extends WorkerHost {
   constructor(
     protected readonly hasura: HasuraService,
     protected readonly notifications: NotificationsService,

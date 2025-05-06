@@ -15,7 +15,7 @@ import { MarkGameServerNodeOffline } from "./jobs/MarkGameServerNodeOffline";
 import { getQueuesProcessors } from "../utilities/QueueProcessors";
 import { loggerFactory } from "../utilities/LoggerFactory";
 import { MatchServerMiddlewareMiddleware } from "../matches/match-server-middleware/match-server-middleware.middleware";
-import { MarkGameServerOffline } from "./jobs/MarkGameServerOffline";
+import { MarkDedicatedServerOffline } from "./jobs/MarkDedicatedServerOffline";
 import { LoggingServiceService } from "./logging-service/logging-service.service";
 import { RedisModule } from "src/redis/redis.module";
 import { NotificationsModule } from "src/notifications/notifications.module";
@@ -27,7 +27,7 @@ import { RconModule } from "src/rcon/rcon.module";
     GameServerNodeGateway,
     CheckGameUpdate,
     MarkGameServerNodeOffline,
-    MarkGameServerOffline,
+    MarkDedicatedServerOffline,
     ...getQueuesProcessors("GameServerNode"),
     loggerFactory(),
     LoggingServiceService,
