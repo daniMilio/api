@@ -123,6 +123,16 @@ export class DemosController {
       });
     }
 
+    if (
+      !["Finished", "Forfeit", "Surrender", "Tie"].includes(
+        match_maps_by_pk.match.status,
+      )
+    ) {
+      return response.status(409).json({
+        error: "map not finished",
+      });
+    }
+
     const { match_map_demos: demos } = await this.hasura.query({
       match_map_demos: {
         __args: {
