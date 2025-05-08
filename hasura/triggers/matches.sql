@@ -8,8 +8,23 @@ DECLARE
     _regions text[];
     available_regions text[];
     has_region_veto BOOLEAN;
+    user_match_count int;
 BEGIN
-    NEW.cancels_at = NOW() + INTERVAL '1 day';
+    IF (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'user' OR (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'verified_user' THEN
+        SELECT COUNT(*) FROM matches 
+        WHERE organizer_steam_id = (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-user-id')::bigint 
+        AND status NOT IN (
+            'Finished',
+            'Tie',
+            'Canceled',
+            'Forfeit',
+            'Surrendered'   
+        ) INTO user_match_count;
+
+        IF user_match_count > 0 THEN
+            RAISE EXCEPTION 'You have pending matches that need to be finished before you can create a new one' USING ERRCODE = '22000';
+        END IF;
+    END IF;
     
     IF NEW.lineup_1_id IS NULL THEN
         INSERT INTO match_lineups DEFAULT VALUES RETURNING id INTO _lineup_1_id;
