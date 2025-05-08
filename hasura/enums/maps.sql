@@ -72,13 +72,14 @@ insert into maps ("name", "type", "active_pool", "workshop_map_id", "poster", "p
     ('de_vertigo', 'Duel', 'true',  null, '/img/maps/screenshots/de_vertigo.webp', '/img/maps/icons/de_vertigo.svg', null),
 
     --  Workshop Duel
-    ('de_brewery', 'Duel', 'true',  '3070290240', '/img/maps/screenshots/de_brewery.webp', '/img/maps/icons/de_brewery.svg', null),
+    ('de_brewery', 'Duel', 'true',  null, '/img/maps/screenshots/de_brewery.webp', '/img/maps/icons/de_brewery.svg', null),
     ('drawbridge', 'Duel', 'false',  '3070192462', '/img/maps/screenshots/de_drawbridge.webp', null, null),
     ('de_foroglio', 'Duel', 'false',  '3132854332', '/img/maps/screenshots/de_foroglio.webp', null, null),
     ('de_assembly', 'Duel', 'false',  '3071005299', '/img/maps/screenshots/de_assembly.webp', '/img/maps/icons/de_assembly.svg', null),
     ('de_memento', 'Duel', 'false',  '3165559377', '/img/maps/screenshots/de_memento.webp', '/img/maps/icons/de_memento.svg', null),
     ('de_palais', 'Duel', 'false',  '2891200262', '/img/maps/screenshots/de_palais.webp', '/img/maps/icons/de_palais.svg', null),
-    ('de_whistle', 'Duel', 'true',  '3308613773', '/img/maps/screenshots/de_whistle.webp', '/img/maps/icons/de_whistle.svg', null)
+    ('de_whistle', 'Duel', 'false',  '3308613773', '/img/maps/screenshots/de_whistle.webp', '/img/maps/icons/de_whistle.svg', null),
+    ('de_dogtown', 'Duel', 'true', null, '/img/maps/screenshots/de_dogtown.webp', '/img/maps/icons/de_dogtown.svg', null)
     
 
 on conflict(name, type) do update set "active_pool" = EXCLUDED."active_pool", "workshop_map_id" = EXCLUDED."workshop_map_id", "poster" = EXCLUDED."poster", "patch" = EXCLUDED."patch", "label" = EXCLUDED."label";
