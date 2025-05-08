@@ -46,6 +46,13 @@ array_relationships:
         table:
           name: match_map_demos
           schema: public
+  - name: invites
+    using:
+      foreign_key_constraint_on:
+        column: match_id
+        table:
+          name: match_invites
+          schema: public
   - name: map_veto_picks
     using:
       foreign_key_constraint_on:

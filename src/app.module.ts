@@ -7,7 +7,6 @@ import { AuthModule } from "./auth/auth.module";
 import { DiscordBotModule } from "./discord-bot/discord-bot.module";
 import { MatchesModule } from "./matches/matches.module";
 
-import { TeamsModule } from "./teams/teams.module";
 import { EncryptionModule } from "./encryption/encryption.module";
 import { CacheModule } from "./cache/cache.module";
 import { S3Module } from "./s3/s3.module";
@@ -34,6 +33,7 @@ import { FriendsModule } from "./friends/friends.module";
 import { TelemetryModule } from "./telemetry/telemetry.module";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { SignalServerModule } from "./signal-server/signal-server.module";
+import { InvitesModule } from "./invites/invites.module";
 
 @Module({
   imports: [
@@ -45,7 +45,6 @@ import { SignalServerModule } from "./signal-server/signal-server.module";
     TypeSenseModule,
     MatchesModule,
     MatchMaking,
-    TeamsModule,
     EncryptionModule,
     CacheModule,
     S3Module,
@@ -95,6 +94,7 @@ import { SignalServerModule } from "./signal-server/signal-server.module";
     FriendsModule,
     TelemetryModule,
     SignalServerModule,
+    InvitesModule,
   ],
   providers: [loggerFactory()],
   controllers: [AppController, QuickConnectController],

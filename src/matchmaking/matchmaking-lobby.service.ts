@@ -251,7 +251,7 @@ export class MatchmakingLobbyService {
   public async removeLobbyFromQueue(lobbyId: string) {
     const queueDetails = await this.getLobbyDetails(lobbyId);
     if (!queueDetails) {
-      return;
+      return false;
     }
 
     for (const region of queueDetails.regions) {
@@ -266,6 +266,8 @@ export class MatchmakingLobbyService {
     }
 
     await this.matchmaking.sendRegionStats();
+
+    return true;
   }
 
   // TODO - extermly inefficient

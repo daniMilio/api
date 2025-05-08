@@ -1,4 +1,7 @@
 SET check_function_bodies = false;
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE public.teams (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     name text NOT NULL,

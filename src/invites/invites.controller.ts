@@ -2,9 +2,10 @@ import { Controller } from "@nestjs/common";
 import { HasuraService } from "../hasura/hasura.service";
 import { HasuraAction } from "../hasura/hasura.controller";
 import { User } from "../auth/types/User";
+import { ExpectedPlayers } from "src/discord-bot/enums/ExpectedPlayers";
 
-@Controller("teams")
-export class TeamsController {
+@Controller("invites")
+export class InvitesController {
   constructor(private readonly hasura: HasuraService) {}
 
   @HasuraAction()
@@ -19,7 +20,135 @@ export class TeamsController {
       return await this.acceptTeamInvite(invite_id, user);
     }
 
+    if (type === "match") {
+      return await this.acceptMatchInvite(invite_id, user);
+    }
+
     return await this.acceptTournamentTeamInvite(invite_id, user);
+  }
+
+  private async acceptMatchInvite(invite_id: string, user: User) {
+    const { match_invites_by_pk } = await this.hasura.query({
+      match_invites_by_pk: {
+        __args: {
+          id: invite_id,
+        },
+        match_id: true,
+        steam_id: true,
+        invited_by_player_steam_id: true,
+      },
+    });
+
+    if (!match_invites_by_pk) {
+      throw Error("unable to find match invite");
+    }
+
+    if (match_invites_by_pk?.steam_id !== user.steam_id) {
+      return {
+        success: false,
+      };
+    }
+
+    const { matches_by_pk } = await this.hasura.query({
+      matches_by_pk: {
+        __args: {
+          id: match_invites_by_pk.match_id,
+        },
+        id: true,
+        options: {
+          type: true,
+        },
+        lineup_1: {
+          id: true,
+          lineup_players: {
+            steam_id: true,
+          },
+        },
+        lineup_2: {
+          id: true,
+          lineup_players: {
+            steam_id: true,
+          },
+        },
+      },
+    });
+
+    if (!matches_by_pk) {
+      throw Error("unable to find match");
+    }
+
+    const { lineup_1, lineup_2 } = matches_by_pk;
+
+    let friendsLineup;
+    if (
+      lineup_1.lineup_players.find(
+        (player) =>
+          player.steam_id === match_invites_by_pk.invited_by_player_steam_id,
+      )
+    ) {
+      friendsLineup = lineup_1;
+    } else if (
+      lineup_2.lineup_players.find(
+        (player) =>
+          player.steam_id === match_invites_by_pk.invited_by_player_steam_id,
+      )
+    ) {
+      friendsLineup = lineup_2;
+    }
+
+    let lineupId = friendsLineup.id;
+    if (
+      friendsLineup.lineup_players.length >=
+      ExpectedPlayers[matches_by_pk.options.type]
+    ) {
+      const otherLineup =
+        lineup_1.id === friendsLineup.id ? lineup_2 : lineup_1;
+      lineupId = otherLineup.id;
+    }
+
+    const { insert_match_lineup_players_one } = await this.hasura.mutation({
+      insert_match_lineup_players_one: {
+        __args: {
+          object: {
+            steam_id: user.steam_id,
+            match_lineup_id: lineupId,
+          },
+        },
+        id: true,
+      },
+    });
+
+    if (!insert_match_lineup_players_one?.id) {
+      throw Error("unable to insert match lineup player");
+    }
+
+    await this.hasura.mutation({
+      delete_match_invites_by_pk: {
+        __args: {
+          id: invite_id,
+        },
+        __typename: true,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  }
+
+  private async denyMatchInvite(invite_id: string, user: User) {
+    await this.hasura.mutation({
+      delete_match_invites_by_pk: {
+        __args: {
+          id: invite_id,
+        },
+        __typename: true,
+      },
+    });
+
+    return {
+      success: true,
+    };
   }
 
   private async acceptTeamInvite(invite_id: string, user: User) {
@@ -133,6 +262,10 @@ export class TeamsController {
 
     if (type === "team") {
       return this.denyTeamInvite(invite_id, user);
+    }
+
+    if (type === "match") {
+      return this.denyMatchInvite(invite_id, user);
     }
 
     return this.denyTournamentTeamInvite(invite_id, user);
