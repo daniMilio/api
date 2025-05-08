@@ -152,6 +152,10 @@ export class GameServerNodeService {
         },
       });
     }
+
+    if (status === "Online" && game_server_nodes_by_pk.status !== status) {
+      await this.updateCsServer(node);
+    }
   }
 
   public async updateIdLabel(nodeId: string) {
@@ -190,46 +194,7 @@ export class GameServerNodeService {
     }
   }
 
-  public async updateCs(gameServerNodeId?: string) {
-    if (gameServerNodeId) {
-      await this.createVolume(
-        gameServerNodeId,
-        `/opt/5stack/demos`,
-        `demos`,
-        "25Gi",
-      );
-
-      await this.createVolume(
-        gameServerNodeId,
-        `/opt/5stack/steamcmd`,
-        `steamcmd`,
-        "1Gi",
-      );
-
-      await this.createVolume(
-        gameServerNodeId,
-        `/opt/5stack/serverfiles`,
-        `serverfiles`,
-        "75Gi",
-      );
-
-      const { game_server_nodes_by_pk } = await this.hasura.query({
-        game_server_nodes_by_pk: {
-          __args: {
-            id: gameServerNodeId,
-          },
-          id: true,
-        },
-      });
-
-      if (!game_server_nodes_by_pk) {
-        throw new Error("Game server not found");
-      }
-
-      await this.updateCsServer(gameServerNodeId);
-      return;
-    }
-
+  public async updateCs() {
     const { game_server_nodes } = await this.hasura.query({
       game_server_nodes: {
         __args: {
@@ -248,7 +213,64 @@ export class GameServerNodeService {
     }
   }
 
-  private async updateCsServer(gameServerNodeId: string) {
+  public async updateCsServer(gameServerNodeId: string, force = false) {
+    const { game_server_nodes_by_pk } = await this.hasura.query({
+      game_server_nodes_by_pk: {
+        __args: {
+          id: gameServerNodeId,
+        },
+        build_id: true,
+      },
+    }); 
+
+    if (!game_server_nodes_by_pk) {
+      this.logger.error(`Game server node not found`, gameServerNodeId);
+      throw new Error("Game server not found");
+    }
+
+    if(!force) {
+      const { settings_by_pk } = await this.hasura.query({
+        settings_by_pk: {
+          __args: {
+            name: "cs_version",
+          },
+          value: true,
+        },
+      });
+  
+      if (settings_by_pk?.value) {
+        const currentBuild: {
+          buildid: string;
+        } = JSON.parse(settings_by_pk.value);
+  
+        if (currentBuild.buildid === game_server_nodes_by_pk.build_id.toString()) {
+          this.logger.log(`CS2 is already up to date on node ${gameServerNodeId}`);
+          return;
+        }
+      }
+    }
+
+    await this.createVolume(
+      gameServerNodeId,
+      `/opt/5stack/demos`,
+      `demos`,
+      "25Gi",
+    );
+
+    await this.createVolume(
+      gameServerNodeId,
+      `/opt/5stack/steamcmd`,
+      `steamcmd`,
+      "1Gi",
+    );
+
+    await this.createVolume(
+      gameServerNodeId,
+      `/opt/5stack/serverfiles`,
+      `serverfiles`,
+      "75Gi",
+    );
+
     this.logger.log(`Updating CS2 on node ${gameServerNodeId}`);
 
     const pod = await this.getUpdateJobPod(gameServerNodeId);
@@ -352,12 +374,6 @@ export class GameServerNodeService {
       const kc = new KubeConfig();
       kc.loadFromDefault();
 
-      const coreV1Api = kc.makeApiClient(CoreV1Api);
-      const { body: logs } = await coreV1Api.readNamespacedPodLog(
-        pod.metadata.name,
-        this.namespace,
-      );
-
       let currentType: string;
       let currentPercentage = 0;
 
@@ -438,7 +454,9 @@ export class GameServerNodeService {
         });
       });
     } catch (error) {
-      console.warn("unable to monitor update status", error);
+      if(process.env.DEV) {
+        console.warn("unable to monitor update status", error);
+      }
       if (attempts > 0) {
         setTimeout(() => {
           void this.moitorUpdateStatus(gameServerNodeId, attempts - 1);
