@@ -487,9 +487,8 @@ export class MatchmakeService {
   }
 
   public async removeConfirmationDetails(confirmationId: string) {
-    await this.redis.hdel(
-      `${getMatchmakingConformationCacheKey(confirmationId)}:confirmed`,
-    );
+    const confirmedKey = `${getMatchmakingConformationCacheKey(confirmationId)}:confirmed`;
+    await this.redis.del(confirmedKey);
 
     await this.redis.del(getMatchmakingConformationCacheKey(confirmationId));
   }
@@ -531,14 +530,16 @@ export class MatchmakeService {
     );
 
     if (confirmationId) {
-      await this.cancelMatchMaking(confirmationId);
+      await this.cancelMatchMaking(confirmationId, true);
     }
 
     await this.redis.del(`matches:confirmation:${matchId}`);
   }
 
-  public async cancelMatchMaking(confirmationId: string) {
-    const { lobbyIds } = await this.getMatchConfirmationDetails(confirmationId);
+  public async cancelMatchMaking(confirmationId: string, hasMatch = false) {
+    let shouldMatchmake = false;
+    const { lobbyIds, type, region } =
+      await this.getMatchConfirmationDetails(confirmationId);
 
     for (const lobbyId of lobbyIds) {
       const lobby = await this.matchmakingLobbyService.getLobbyDetails(lobbyId);
@@ -547,16 +548,18 @@ export class MatchmakeService {
         continue;
       }
 
-      let requeue = true;
-      for (const steamId of lobby.players) {
-        const wasReady = await this.redis.hget(
-          `${getMatchmakingConformationCacheKey(confirmationId)}:confirmed`,
-          steamId,
-        );
+      let requeue = !hasMatch;
+      if (!hasMatch) {
+        for (const steamId of lobby.players) {
+          const wasReady = await this.redis.hget(
+            `${getMatchmakingConformationCacheKey(confirmationId)}:confirmed`,
+            steamId,
+          );
 
-        if (!wasReady) {
-          requeue = false;
-          break;
+          if (!wasReady) {
+            requeue = false;
+            break;
+          }
         }
       }
 
@@ -568,12 +571,17 @@ export class MatchmakeService {
         continue;
       }
 
+      shouldMatchmake = true;
       await this.addLobbyToQueue(lobbyId);
     }
 
     await this.removeConfirmationDetails(confirmationId);
 
     await this.sendRegionStats();
+
+    if (shouldMatchmake) {
+      void this.matchmake(type, region);
+    }
   }
 
   public async playerConfirmMatchmaking(

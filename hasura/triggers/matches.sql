@@ -7,6 +7,7 @@ DECLARE
     _lineup_2_id UUID;
     _regions text[];
     available_regions text[];
+    has_region_veto BOOLEAN;
 BEGIN
     NEW.cancels_at = NOW() + INTERVAL '1 day';
     
@@ -36,6 +37,13 @@ BEGIN
 
     IF array_length(available_regions, 1) = 1 THEN
         NEW.region = available_regions[1];
+    END IF;
+
+
+    select region_veto into has_region_veto from match_options where id = NEW.match_options_id;
+
+    IF has_region_veto = false AND NEW.region IS NULL THEN
+        RAISE EXCEPTION 'Region veto is disabled but no region is selected' USING ERRCODE = '22000';
     END IF;
 
 	RETURN NEW;
