@@ -8,4 +8,5 @@ export interface User {
   profile_url?: string;
   avatar_url?: string;
   discord_id?: string;
+  language?: string;
 }

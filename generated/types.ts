@@ -344,6 +344,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "language": [
+                11
+            ],
             "name": [
                 11
             ],
@@ -28915,6 +28918,9 @@ export default {
                     ]
                 }
             ],
+            "language": [
+                11
+            ],
             "lobby_players": [
                 592,
                 {
@@ -29746,6 +29752,9 @@ export default {
             "kills_aggregate": [
                 1353
             ],
+            "language": [
+                13
+            ],
             "lobby_players": [
                 603
             ],
@@ -29916,6 +29925,9 @@ export default {
             "kills": [
                 1359
             ],
+            "language": [
+                11
+            ],
             "lobby_players": [
                 600
             ],
@@ -29993,6 +30005,9 @@ export default {
             "elo": [
                 1188
             ],
+            "language": [
+                11
+            ],
             "matchmaking_cooldown": [
                 1778
             ],
@@ -30030,6 +30045,9 @@ export default {
             ],
             "elo": [
                 1188
+            ],
+            "language": [
+                11
             ],
             "matchmaking_cooldown": [
                 1778
@@ -30156,6 +30174,9 @@ export default {
             "kills_aggregate": [
                 1358
             ],
+            "language": [
+                1190
+            ],
             "lobby_players_aggregate": [
                 599
             ],
@@ -30248,6 +30269,9 @@ export default {
             "discord_id": [
                 11
             ],
+            "language": [
+                11
+            ],
             "name": [
                 11
             ],
@@ -30331,6 +30355,9 @@ export default {
                 1778
             ],
             "discord_id": [
+                11
+            ],
+            "language": [
                 11
             ],
             "name": [

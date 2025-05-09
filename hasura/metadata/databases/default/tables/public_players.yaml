@@ -247,6 +247,7 @@ select_permissions:
       columns:
         - avatar_url
         - country
+        - language
         - name
         - name_registered
         - profile_url
@@ -271,6 +272,7 @@ update_permissions:
         - avatar_url
         - country
         - discord_id
+        - language
         - name
         - profile_url
         - role
@@ -283,6 +285,7 @@ update_permissions:
         - avatar_url
         - country
         - discord_id
+        - language
         - name
         - profile_url
         - role
@@ -295,6 +298,7 @@ update_permissions:
         - avatar_url
         - country
         - discord_id
+        - language
         - name
         - profile_url
         - role
@@ -305,6 +309,7 @@ update_permissions:
     permission:
       columns:
         - country
+        - language
       filter:
         steam_id:
           _eq: X-Hasura-User-Id

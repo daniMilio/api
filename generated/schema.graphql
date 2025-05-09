@@ -54,6 +54,7 @@ type MeResponse {
   avatar_url: String!
   country: String
   discord_id: String
+  language: String
   name: String!
   player: players
   profile_url: String
@@ -23991,6 +23992,7 @@ type players {
     """filter the rows returned"""
     where: player_kills_bool_exp
   ): player_kills_aggregate!
+  language: String
 
   """An array relationship"""
   lobby_players(
@@ -24598,6 +24600,7 @@ input players_bool_exp {
   is_muted: Boolean_comparison_exp
   kills: player_kills_bool_exp
   kills_aggregate: player_kills_aggregate_bool_exp
+  language: String_comparison_exp
   lobby_players: lobby_players_bool_exp
   lobby_players_aggregate: lobby_players_aggregate_bool_exp
   matches: matches_bool_exp
@@ -24683,6 +24686,7 @@ input players_insert_input {
   friends: my_friends_arr_rel_insert_input
   invited_players: team_invites_arr_rel_insert_input
   kills: player_kills_arr_rel_insert_input
+  language: String
   lobby_players: lobby_players_arr_rel_insert_input
   multi_kills: v_player_multi_kills_arr_rel_insert_input
   name: String
@@ -24719,6 +24723,7 @@ type players_max_fields {
   A computed field, executes function "get_player_elo"
   """
   elo: numeric
+  language: String
 
   """
   A computed field, executes function "get_player_matchmaking_cooldown"
@@ -24750,6 +24755,7 @@ type players_min_fields {
   A computed field, executes function "get_player_elo"
   """
   elo: numeric
+  language: String
 
   """
   A computed field, executes function "get_player_matchmaking_cooldown"
@@ -24820,6 +24826,7 @@ input players_order_by {
   is_in_another_match: order_by
   is_muted: order_by
   kills_aggregate: player_kills_aggregate_order_by
+  language: order_by
   lobby_players_aggregate: lobby_players_aggregate_order_by
   matches_aggregate: matches_aggregate_order_by
   matchmaking_cooldown: order_by
@@ -24866,6 +24873,9 @@ enum players_select_column {
   discord_id
 
   """column name"""
+  language
+
+  """column name"""
   name
 
   """column name"""
@@ -24889,6 +24899,7 @@ input players_set_input {
   country: String
   created_at: timestamptz
   discord_id: String
+  language: String
   name: String
   name_registered: Boolean
   profile_url: String
@@ -24955,6 +24966,7 @@ input players_stream_cursor_value_input {
   country: String
   created_at: timestamptz
   discord_id: String
+  language: String
   name: String
   name_registered: Boolean
   profile_url: String
@@ -24991,6 +25003,9 @@ enum players_update_column {
 
   """column name"""
   discord_id
+
+  """column name"""
+  language
 
   """column name"""
   name
