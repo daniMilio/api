@@ -45,9 +45,18 @@ export class GameServerNodeService {
       server_regions: {
         __args: {
           where: {
-            is_lan: {
-              _eq: true,
-            },
+            _or: [
+              {
+                value: {
+                  _eq: "LAN",
+                },
+              },
+              {
+                is_lan: {
+                  _eq: true,
+                },
+              },
+            ],
           },
         },
         value: true,
