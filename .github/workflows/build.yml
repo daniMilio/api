@@ -34,11 +34,11 @@ jobs:
         with:
           push: true
           platforms: ${{ matrix.platform }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/api:buildcache-${{ steps.platform.outputs.arch }}
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/api:buildcache-${{ steps.platform.outputs.arch }},mode=max
+          cache-from: type=registry,ref=ghcr.io/danimilio/api:buildcache-${{ steps.platform.outputs.arch }}
+          cache-to: type=registry,ref=ghcr.io/danimilio/api:buildcache-${{ steps.platform.outputs.arch }},mode=max
           tags: |
-            ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-${{ steps.platform.outputs.arch }}
-            ghcr.io/${{ github.repository_owner }}/api:latest-${{ steps.platform.outputs.arch }}
+            ghcr.io/danimilio/api:${{ github.sha }}-${{ steps.platform.outputs.arch }}
+            ghcr.io/danimilio/api:latest-${{ steps.platform.outputs.arch }}
   merge:
     needs: docker
     runs-on: ubuntu-latest
