@@ -35,13 +35,6 @@ insert into maps ("name", "type", "active_pool", "workshop_map_id", "poster", "p
 
     -- Workshop Competitive
     ('de_cache', 'Competitive', 'false',  '3437809122', '/img/maps/screenshots/de_cache.webp', '/img/maps/icons/de_cache.svg', null),
-    ('de_cbble', 'Competitive', 'false',  '3070212801', '/img/maps/screenshots/de_cbble.webp', null, 'Cobblestone'),
-    ('de_biome', 'Competitive', 'false',  '3075706807', '/img/maps/screenshots/de_biome.webp', null, null),   
-    ('de_all_in_one', 'Competitive', 'false',  '3114174859', '/img/maps/screenshots/de_all_in_one.webp', null, null),
-    ('de_aztec_hr', 'Competitive', 'false',  '3079692971', '/img/maps/screenshots/de_aztec.webp', null, 'Aztec'),
-    ('de_contra', 'Competitive', 'false',  '3301642476', '/img/maps/screenshots/de_contra.webp', null, null),
-    ('de_prob_mill', 'Competitive', 'false',  '3073499287', '/img/maps/screenshots/de_cpl_mill.webp', null, 'CPL Mill'),
-    ('de_prodigy', 'Competitive', 'false',  '3195849330', '/img/maps/screenshots/de_prodigy.webp', null, null),
     ('de_thera', 'Competitive', 'false',  '3121217565', '/img/maps/screenshots/de_thera.webp', '/img/maps/icons/de_thera.svg', null),
     ('de_mills', 'Competitive', 'false',  '3152430710', '/img/maps/screenshots/de_mills.webp', '/img/maps/icons/de_mills.svg', null),    
     ('de_edin', 'Competitive', 'false',  '3328169568', '/img/maps/screenshots/de_edin.webp', '/img/maps/icons/de_edin.svg', null),
@@ -57,8 +50,6 @@ insert into maps ("name", "type", "active_pool", "workshop_map_id", "poster", "p
 
     --  Workshop Wingman
     ('de_brewery', 'Wingman', 'true',  null, '/img/maps/screenshots/de_brewery.webp', '/img/maps/icons/de_brewery.svg', null),
-    ('drawbridge', 'Wingman', 'false',  '3070192462', '/img/maps/screenshots/de_drawbridge.webp', null, null),
-    ('de_foroglio', 'Wingman', 'false',  '3132854332', '/img/maps/screenshots/de_foroglio.webp', null, null),
     ('de_assembly', 'Wingman', 'false',  '3071005299', '/img/maps/screenshots/de_assembly.webp', '/img/maps/icons/de_assembly.svg', null),
     ('de_memento', 'Wingman', 'false',  '3165559377', '/img/maps/screenshots/de_memento.webp', '/img/maps/icons/de_memento.svg', null),
     ('de_palais', 'Wingman', 'false',  '2891200262', '/img/maps/screenshots/de_palais.webp', '/img/maps/icons/de_palais.svg', null),
@@ -73,8 +64,6 @@ insert into maps ("name", "type", "active_pool", "workshop_map_id", "poster", "p
 
     --  Workshop Duel
     ('de_brewery', 'Duel', 'true',  null, '/img/maps/screenshots/de_brewery.webp', '/img/maps/icons/de_brewery.svg', null),
-    ('drawbridge', 'Duel', 'false',  '3070192462', '/img/maps/screenshots/de_drawbridge.webp', null, null),
-    ('de_foroglio', 'Duel', 'false',  '3132854332', '/img/maps/screenshots/de_foroglio.webp', null, null),
     ('de_assembly', 'Duel', 'false',  '3071005299', '/img/maps/screenshots/de_assembly.webp', '/img/maps/icons/de_assembly.svg', null),
     ('de_memento', 'Duel', 'false',  '3165559377', '/img/maps/screenshots/de_memento.webp', '/img/maps/icons/de_memento.svg', null),
     ('de_palais', 'Duel', 'false',  '2891200262', '/img/maps/screenshots/de_palais.webp', '/img/maps/icons/de_palais.svg', null),
