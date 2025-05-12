@@ -37,14 +37,9 @@ BEGIN
         NEW.regions = (SELECT array_agg(region) FROM servers where enabled = true);
     END IF;
 
-    IF NEW.region_veto = false AND (NEW.regions IS NULL OR NEW.regions = '{}') THEN
-        RAISE EXCEPTION 'Region veto is disabled but no regions are selected' USING ERRCODE = '22000';
-    END IF;
-
     IF EXISTS (SELECT 1 FROM tournaments WHERE match_options_id = NEW.id) AND NEW.lobby_access != 'Private' THEN 
         RAISE EXCEPTION 'Tournament matches can only have Private lobby access' USING ERRCODE = '22000';
     END IF;
-
 
     IF NEW.lobby_access = 'Invite' AND NEW.invite_code IS NULL THEN
         NEW.invite_code := generate_invite_code();

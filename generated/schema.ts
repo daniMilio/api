@@ -32,6 +32,7 @@ export interface MeResponse {
     avatar_url: Scalars['String']
     country: (Scalars['String'] | null)
     discord_id: (Scalars['String'] | null)
+    language: (Scalars['String'] | null)
     name: Scalars['String']
     player: (players | null)
     profile_url: (Scalars['String'] | null)
@@ -2380,6 +2381,156 @@ export type maps_select_column_maps_aggregate_bool_exp_bool_or_arguments_columns
 export type maps_update_column = 'active_pool' | 'enabled' | 'id' | 'label' | 'name' | 'patch' | 'poster' | 'type' | 'workshop_map_id'
 
 
+/** columns and relationships of "match_invites" */
+export interface match_invites {
+    created_at: Scalars['timestamptz']
+    id: Scalars['uuid']
+    /** An object relationship */
+    invited_by: players
+    invited_by_player_steam_id: Scalars['bigint']
+    /** An object relationship */
+    match: matches
+    match_id: Scalars['uuid']
+    /** An object relationship */
+    player: players
+    steam_id: Scalars['bigint']
+    __typename: 'match_invites'
+}
+
+
+/** aggregated selection of "match_invites" */
+export interface match_invites_aggregate {
+    aggregate: (match_invites_aggregate_fields | null)
+    nodes: match_invites[]
+    __typename: 'match_invites_aggregate'
+}
+
+
+/** aggregate fields of "match_invites" */
+export interface match_invites_aggregate_fields {
+    avg: (match_invites_avg_fields | null)
+    count: Scalars['Int']
+    max: (match_invites_max_fields | null)
+    min: (match_invites_min_fields | null)
+    stddev: (match_invites_stddev_fields | null)
+    stddev_pop: (match_invites_stddev_pop_fields | null)
+    stddev_samp: (match_invites_stddev_samp_fields | null)
+    sum: (match_invites_sum_fields | null)
+    var_pop: (match_invites_var_pop_fields | null)
+    var_samp: (match_invites_var_samp_fields | null)
+    variance: (match_invites_variance_fields | null)
+    __typename: 'match_invites_aggregate_fields'
+}
+
+
+/** aggregate avg on columns */
+export interface match_invites_avg_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_avg_fields'
+}
+
+
+/** unique or primary key constraints on table "match_invites" */
+export type match_invites_constraint = 'match_invites_match_id_invited_by_player_steam_id_steam_id_key' | 'match_invites_pkey'
+
+
+/** aggregate max on columns */
+export interface match_invites_max_fields {
+    created_at: (Scalars['timestamptz'] | null)
+    id: (Scalars['uuid'] | null)
+    invited_by_player_steam_id: (Scalars['bigint'] | null)
+    match_id: (Scalars['uuid'] | null)
+    steam_id: (Scalars['bigint'] | null)
+    __typename: 'match_invites_max_fields'
+}
+
+
+/** aggregate min on columns */
+export interface match_invites_min_fields {
+    created_at: (Scalars['timestamptz'] | null)
+    id: (Scalars['uuid'] | null)
+    invited_by_player_steam_id: (Scalars['bigint'] | null)
+    match_id: (Scalars['uuid'] | null)
+    steam_id: (Scalars['bigint'] | null)
+    __typename: 'match_invites_min_fields'
+}
+
+
+/** response of any mutation on the table "match_invites" */
+export interface match_invites_mutation_response {
+    /** number of rows affected by the mutation */
+    affected_rows: Scalars['Int']
+    /** data from the rows affected by the mutation */
+    returning: match_invites[]
+    __typename: 'match_invites_mutation_response'
+}
+
+
+/** select columns of table "match_invites" */
+export type match_invites_select_column = 'created_at' | 'id' | 'invited_by_player_steam_id' | 'match_id' | 'steam_id'
+
+
+/** aggregate stddev on columns */
+export interface match_invites_stddev_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_stddev_fields'
+}
+
+
+/** aggregate stddev_pop on columns */
+export interface match_invites_stddev_pop_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_stddev_pop_fields'
+}
+
+
+/** aggregate stddev_samp on columns */
+export interface match_invites_stddev_samp_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_stddev_samp_fields'
+}
+
+
+/** aggregate sum on columns */
+export interface match_invites_sum_fields {
+    invited_by_player_steam_id: (Scalars['bigint'] | null)
+    steam_id: (Scalars['bigint'] | null)
+    __typename: 'match_invites_sum_fields'
+}
+
+
+/** update columns of table "match_invites" */
+export type match_invites_update_column = 'created_at' | 'id' | 'invited_by_player_steam_id' | 'match_id' | 'steam_id'
+
+
+/** aggregate var_pop on columns */
+export interface match_invites_var_pop_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_var_pop_fields'
+}
+
+
+/** aggregate var_samp on columns */
+export interface match_invites_var_samp_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_var_samp_fields'
+}
+
+
+/** aggregate variance on columns */
+export interface match_invites_variance_fields {
+    invited_by_player_steam_id: (Scalars['Float'] | null)
+    steam_id: (Scalars['Float'] | null)
+    __typename: 'match_invites_variance_fields'
+}
+
+
 /** relational table for assigning a players to a match and lineup */
 export interface match_lineup_players {
     captain: Scalars['Boolean']
@@ -3789,6 +3940,10 @@ export interface matches {
     id: Scalars['uuid']
     /** A computed field, executes function "match_invite_code" */
     invite_code: (Scalars['String'] | null)
+    /** An array relationship */
+    invites: match_invites[]
+    /** An aggregate relationship */
+    invites_aggregate: match_invites_aggregate
     /** A computed field, executes function "is_captain" */
     is_captain: (Scalars['Boolean'] | null)
     /** A computed field, executes function "is_coach" */
@@ -4314,6 +4469,10 @@ export interface mutation_root {
     delete_maps: (maps_mutation_response | null)
     /** delete single row from the table: "maps" */
     delete_maps_by_pk: (maps | null)
+    /** delete data from the table: "match_invites" */
+    delete_match_invites: (match_invites_mutation_response | null)
+    /** delete single row from the table: "match_invites" */
+    delete_match_invites_by_pk: (match_invites | null)
     /** delete data from the table: "match_lineup_players" */
     delete_match_lineup_players: (match_lineup_players_mutation_response | null)
     /** delete single row from the table: "match_lineup_players" */
@@ -4562,6 +4721,10 @@ export interface mutation_root {
     insert_maps: (maps_mutation_response | null)
     /** insert a single row into the table: "maps" */
     insert_maps_one: (maps | null)
+    /** insert data into the table: "match_invites" */
+    insert_match_invites: (match_invites_mutation_response | null)
+    /** insert a single row into the table: "match_invites" */
+    insert_match_invites_one: (match_invites | null)
     /** insert data into the table: "match_lineup_players" */
     insert_match_lineup_players: (match_lineup_players_mutation_response | null)
     /** insert a single row into the table: "match_lineup_players" */
@@ -4901,6 +5064,12 @@ export interface mutation_root {
     update_maps_by_pk: (maps | null)
     /** update multiples rows of table: "maps" */
     update_maps_many: ((maps_mutation_response | null)[] | null)
+    /** update data of the table: "match_invites" */
+    update_match_invites: (match_invites_mutation_response | null)
+    /** update single row of the table: "match_invites" */
+    update_match_invites_by_pk: (match_invites | null)
+    /** update multiples rows of table: "match_invites" */
+    update_match_invites_many: ((match_invites_mutation_response | null)[] | null)
     /** update data of the table: "match_lineup_players" */
     update_match_lineup_players: (match_lineup_players_mutation_response | null)
     /** update single row of the table: "match_lineup_players" */
@@ -7077,6 +7246,7 @@ export interface players {
     kills: player_kills[]
     /** An aggregate relationship */
     kills_aggregate: player_kills_aggregate
+    language: (Scalars['String'] | null)
     /** An array relationship */
     lobby_players: lobby_players[]
     /** An aggregate relationship */
@@ -7196,6 +7366,7 @@ export interface players_max_fields {
     discord_id: (Scalars['String'] | null)
     /** A computed field, executes function "get_player_elo" */
     elo: (Scalars['numeric'] | null)
+    language: (Scalars['String'] | null)
     /** A computed field, executes function "get_player_matchmaking_cooldown" */
     matchmaking_cooldown: (Scalars['timestamptz'] | null)
     name: (Scalars['String'] | null)
@@ -7217,6 +7388,7 @@ export interface players_min_fields {
     discord_id: (Scalars['String'] | null)
     /** A computed field, executes function "get_player_elo" */
     elo: (Scalars['numeric'] | null)
+    language: (Scalars['String'] | null)
     /** A computed field, executes function "get_player_matchmaking_cooldown" */
     matchmaking_cooldown: (Scalars['timestamptz'] | null)
     name: (Scalars['String'] | null)
@@ -7239,7 +7411,7 @@ export interface players_mutation_response {
 
 
 /** select columns of table "players" */
-export type players_select_column = 'avatar_url' | 'country' | 'created_at' | 'discord_id' | 'name' | 'name_registered' | 'profile_url' | 'role' | 'steam_id'
+export type players_select_column = 'avatar_url' | 'country' | 'created_at' | 'discord_id' | 'language' | 'name' | 'name_registered' | 'profile_url' | 'role' | 'steam_id'
 
 
 /** aggregate stddev on columns */
@@ -7287,7 +7459,7 @@ export interface players_sum_fields {
 
 
 /** update columns of table "players" */
-export type players_update_column = 'avatar_url' | 'country' | 'created_at' | 'discord_id' | 'name' | 'name_registered' | 'profile_url' | 'role' | 'steam_id'
+export type players_update_column = 'avatar_url' | 'country' | 'created_at' | 'discord_id' | 'language' | 'name' | 'name_registered' | 'profile_url' | 'role' | 'steam_id'
 
 
 /** aggregate var_pop on columns */
@@ -7493,6 +7665,12 @@ export interface query_root {
     maps_aggregate: maps_aggregate
     /** fetch data from the table: "maps" using primary key columns */
     maps_by_pk: (maps | null)
+    /** fetch data from the table: "match_invites" */
+    match_invites: match_invites[]
+    /** fetch aggregated fields from the table: "match_invites" */
+    match_invites_aggregate: match_invites_aggregate
+    /** fetch data from the table: "match_invites" using primary key columns */
+    match_invites_by_pk: (match_invites | null)
     /** fetch data from the table: "match_lineup_players" */
     match_lineup_players: match_lineup_players[]
     /** fetch aggregated fields from the table: "match_lineup_players" */
@@ -8377,6 +8555,14 @@ export interface subscription_root {
     maps_by_pk: (maps | null)
     /** fetch data from the table in a streaming manner: "maps" */
     maps_stream: maps[]
+    /** fetch data from the table: "match_invites" */
+    match_invites: match_invites[]
+    /** fetch aggregated fields from the table: "match_invites" */
+    match_invites_aggregate: match_invites_aggregate
+    /** fetch data from the table: "match_invites" using primary key columns */
+    match_invites_by_pk: (match_invites | null)
+    /** fetch data from the table in a streaming manner: "match_invites" */
+    match_invites_stream: match_invites[]
     /** fetch data from the table: "match_lineup_players" */
     match_lineup_players: match_lineup_players[]
     /** fetch aggregated fields from the table: "match_lineup_players" */
@@ -11576,6 +11762,7 @@ export interface MeResponseGenqlSelection{
     avatar_url?: boolean | number
     country?: boolean | number
     discord_id?: boolean | number
+    language?: boolean | number
     name?: boolean | number
     player?: playersGenqlSelection
     profile_url?: boolean | number
@@ -15721,6 +15908,260 @@ _set?: (maps_set_input | null),
 where: maps_bool_exp}
 
 
+/** columns and relationships of "match_invites" */
+export interface match_invitesGenqlSelection{
+    created_at?: boolean | number
+    id?: boolean | number
+    /** An object relationship */
+    invited_by?: playersGenqlSelection
+    invited_by_player_steam_id?: boolean | number
+    /** An object relationship */
+    match?: matchesGenqlSelection
+    match_id?: boolean | number
+    /** An object relationship */
+    player?: playersGenqlSelection
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** aggregated selection of "match_invites" */
+export interface match_invites_aggregateGenqlSelection{
+    aggregate?: match_invites_aggregate_fieldsGenqlSelection
+    nodes?: match_invitesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface match_invites_aggregate_bool_exp {count?: (match_invites_aggregate_bool_exp_count | null)}
+
+export interface match_invites_aggregate_bool_exp_count {arguments?: (match_invites_select_column[] | null),distinct?: (Scalars['Boolean'] | null),filter?: (match_invites_bool_exp | null),predicate: Int_comparison_exp}
+
+
+/** aggregate fields of "match_invites" */
+export interface match_invites_aggregate_fieldsGenqlSelection{
+    avg?: match_invites_avg_fieldsGenqlSelection
+    count?: { __args: {columns?: (match_invites_select_column[] | null), distinct?: (Scalars['Boolean'] | null)} } | boolean | number
+    max?: match_invites_max_fieldsGenqlSelection
+    min?: match_invites_min_fieldsGenqlSelection
+    stddev?: match_invites_stddev_fieldsGenqlSelection
+    stddev_pop?: match_invites_stddev_pop_fieldsGenqlSelection
+    stddev_samp?: match_invites_stddev_samp_fieldsGenqlSelection
+    sum?: match_invites_sum_fieldsGenqlSelection
+    var_pop?: match_invites_var_pop_fieldsGenqlSelection
+    var_samp?: match_invites_var_samp_fieldsGenqlSelection
+    variance?: match_invites_variance_fieldsGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by aggregate values of table "match_invites" */
+export interface match_invites_aggregate_order_by {avg?: (match_invites_avg_order_by | null),count?: (order_by | null),max?: (match_invites_max_order_by | null),min?: (match_invites_min_order_by | null),stddev?: (match_invites_stddev_order_by | null),stddev_pop?: (match_invites_stddev_pop_order_by | null),stddev_samp?: (match_invites_stddev_samp_order_by | null),sum?: (match_invites_sum_order_by | null),var_pop?: (match_invites_var_pop_order_by | null),var_samp?: (match_invites_var_samp_order_by | null),variance?: (match_invites_variance_order_by | null)}
+
+
+/** input type for inserting array relation for remote table "match_invites" */
+export interface match_invites_arr_rel_insert_input {data: match_invites_insert_input[],
+/** upsert condition */
+on_conflict?: (match_invites_on_conflict | null)}
+
+
+/** aggregate avg on columns */
+export interface match_invites_avg_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by avg() on columns of table "match_invites" */
+export interface match_invites_avg_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** Boolean expression to filter rows from the table "match_invites". All fields are combined with a logical 'AND'. */
+export interface match_invites_bool_exp {_and?: (match_invites_bool_exp[] | null),_not?: (match_invites_bool_exp | null),_or?: (match_invites_bool_exp[] | null),created_at?: (timestamptz_comparison_exp | null),id?: (uuid_comparison_exp | null),invited_by?: (players_bool_exp | null),invited_by_player_steam_id?: (bigint_comparison_exp | null),match?: (matches_bool_exp | null),match_id?: (uuid_comparison_exp | null),player?: (players_bool_exp | null),steam_id?: (bigint_comparison_exp | null)}
+
+
+/** input type for incrementing numeric columns in table "match_invites" */
+export interface match_invites_inc_input {invited_by_player_steam_id?: (Scalars['bigint'] | null),steam_id?: (Scalars['bigint'] | null)}
+
+
+/** input type for inserting data into table "match_invites" */
+export interface match_invites_insert_input {created_at?: (Scalars['timestamptz'] | null),id?: (Scalars['uuid'] | null),invited_by?: (players_obj_rel_insert_input | null),invited_by_player_steam_id?: (Scalars['bigint'] | null),match?: (matches_obj_rel_insert_input | null),match_id?: (Scalars['uuid'] | null),player?: (players_obj_rel_insert_input | null),steam_id?: (Scalars['bigint'] | null)}
+
+
+/** aggregate max on columns */
+export interface match_invites_max_fieldsGenqlSelection{
+    created_at?: boolean | number
+    id?: boolean | number
+    invited_by_player_steam_id?: boolean | number
+    match_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by max() on columns of table "match_invites" */
+export interface match_invites_max_order_by {created_at?: (order_by | null),id?: (order_by | null),invited_by_player_steam_id?: (order_by | null),match_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** aggregate min on columns */
+export interface match_invites_min_fieldsGenqlSelection{
+    created_at?: boolean | number
+    id?: boolean | number
+    invited_by_player_steam_id?: boolean | number
+    match_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by min() on columns of table "match_invites" */
+export interface match_invites_min_order_by {created_at?: (order_by | null),id?: (order_by | null),invited_by_player_steam_id?: (order_by | null),match_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** response of any mutation on the table "match_invites" */
+export interface match_invites_mutation_responseGenqlSelection{
+    /** number of rows affected by the mutation */
+    affected_rows?: boolean | number
+    /** data from the rows affected by the mutation */
+    returning?: match_invitesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** on_conflict condition type for table "match_invites" */
+export interface match_invites_on_conflict {constraint: match_invites_constraint,update_columns?: match_invites_update_column[],where?: (match_invites_bool_exp | null)}
+
+
+/** Ordering options when selecting data from "match_invites". */
+export interface match_invites_order_by {created_at?: (order_by | null),id?: (order_by | null),invited_by?: (players_order_by | null),invited_by_player_steam_id?: (order_by | null),match?: (matches_order_by | null),match_id?: (order_by | null),player?: (players_order_by | null),steam_id?: (order_by | null)}
+
+
+/** primary key columns input for table: match_invites */
+export interface match_invites_pk_columns_input {id: Scalars['uuid']}
+
+
+/** input type for updating data in table "match_invites" */
+export interface match_invites_set_input {created_at?: (Scalars['timestamptz'] | null),id?: (Scalars['uuid'] | null),invited_by_player_steam_id?: (Scalars['bigint'] | null),match_id?: (Scalars['uuid'] | null),steam_id?: (Scalars['bigint'] | null)}
+
+
+/** aggregate stddev on columns */
+export interface match_invites_stddev_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by stddev() on columns of table "match_invites" */
+export interface match_invites_stddev_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** aggregate stddev_pop on columns */
+export interface match_invites_stddev_pop_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by stddev_pop() on columns of table "match_invites" */
+export interface match_invites_stddev_pop_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** aggregate stddev_samp on columns */
+export interface match_invites_stddev_samp_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by stddev_samp() on columns of table "match_invites" */
+export interface match_invites_stddev_samp_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** Streaming cursor of the table "match_invites" */
+export interface match_invites_stream_cursor_input {
+/** Stream column input with initial value */
+initial_value: match_invites_stream_cursor_value_input,
+/** cursor ordering */
+ordering?: (cursor_ordering | null)}
+
+
+/** Initial value of the column from where the streaming should start */
+export interface match_invites_stream_cursor_value_input {created_at?: (Scalars['timestamptz'] | null),id?: (Scalars['uuid'] | null),invited_by_player_steam_id?: (Scalars['bigint'] | null),match_id?: (Scalars['uuid'] | null),steam_id?: (Scalars['bigint'] | null)}
+
+
+/** aggregate sum on columns */
+export interface match_invites_sum_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by sum() on columns of table "match_invites" */
+export interface match_invites_sum_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+export interface match_invites_updates {
+/** increments the numeric columns with given value of the filtered values */
+_inc?: (match_invites_inc_input | null),
+/** sets the columns of the filtered rows to the given values */
+_set?: (match_invites_set_input | null),
+/** filter the rows which have to be updated */
+where: match_invites_bool_exp}
+
+
+/** aggregate var_pop on columns */
+export interface match_invites_var_pop_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by var_pop() on columns of table "match_invites" */
+export interface match_invites_var_pop_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** aggregate var_samp on columns */
+export interface match_invites_var_samp_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by var_samp() on columns of table "match_invites" */
+export interface match_invites_var_samp_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
+/** aggregate variance on columns */
+export interface match_invites_variance_fieldsGenqlSelection{
+    invited_by_player_steam_id?: boolean | number
+    steam_id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** order by variance() on columns of table "match_invites" */
+export interface match_invites_variance_order_by {invited_by_player_steam_id?: (order_by | null),steam_id?: (order_by | null)}
+
+
 /** relational table for assigning a players to a match and lineup */
 export interface match_lineup_playersGenqlSelection{
     captain?: boolean | number
@@ -18188,6 +18629,30 @@ export interface matchesGenqlSelection{
     id?: boolean | number
     /** A computed field, executes function "match_invite_code" */
     invite_code?: boolean | number
+    /** An array relationship */
+    invites?: (match_invitesGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
+    /** An aggregate relationship */
+    invites_aggregate?: (match_invites_aggregateGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
     /** A computed field, executes function "is_captain" */
     is_captain?: boolean | number
     /** A computed field, executes function "is_coach" */
@@ -18589,7 +19054,7 @@ export interface matches_avg_order_by {organizer_steam_id?: (order_by | null)}
 
 
 /** Boolean expression to filter rows from the table "matches". All fields are combined with a logical 'AND'. */
-export interface matches_bool_exp {_and?: (matches_bool_exp[] | null),_not?: (matches_bool_exp | null),_or?: (matches_bool_exp[] | null),can_assign_server?: (Boolean_comparison_exp | null),can_cancel?: (Boolean_comparison_exp | null),can_check_in?: (Boolean_comparison_exp | null),can_schedule?: (Boolean_comparison_exp | null),can_start?: (Boolean_comparison_exp | null),cancels_at?: (timestamptz_comparison_exp | null),connection_link?: (String_comparison_exp | null),connection_string?: (String_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),current_match_map_id?: (uuid_comparison_exp | null),demos?: (match_map_demos_bool_exp | null),demos_aggregate?: (match_map_demos_aggregate_bool_exp | null),e_match_status?: (e_match_status_bool_exp | null),e_region?: (server_regions_bool_exp | null),ended_at?: (timestamptz_comparison_exp | null),id?: (uuid_comparison_exp | null),invite_code?: (String_comparison_exp | null),is_captain?: (Boolean_comparison_exp | null),is_coach?: (Boolean_comparison_exp | null),is_in_lineup?: (Boolean_comparison_exp | null),is_match_server_available?: (Boolean_comparison_exp | null),is_organizer?: (Boolean_comparison_exp | null),is_server_online?: (Boolean_comparison_exp | null),is_tournament_match?: (Boolean_comparison_exp | null),label?: (String_comparison_exp | null),lineup_1?: (match_lineups_bool_exp | null),lineup_1_id?: (uuid_comparison_exp | null),lineup_2?: (match_lineups_bool_exp | null),lineup_2_id?: (uuid_comparison_exp | null),lineup_counts?: (json_comparison_exp | null),map_veto_picking_lineup_id?: (uuid_comparison_exp | null),map_veto_picks?: (match_map_veto_picks_bool_exp | null),map_veto_picks_aggregate?: (match_map_veto_picks_aggregate_bool_exp | null),map_veto_type?: (String_comparison_exp | null),match_maps?: (match_maps_bool_exp | null),match_maps_aggregate?: (match_maps_aggregate_bool_exp | null),match_options_id?: (uuid_comparison_exp | null),max_players_per_lineup?: (Int_comparison_exp | null),min_players_per_lineup?: (Int_comparison_exp | null),options?: (match_options_bool_exp | null),organizer?: (players_bool_exp | null),organizer_steam_id?: (bigint_comparison_exp | null),password?: (String_comparison_exp | null),player_assists?: (player_assists_bool_exp | null),player_assists_aggregate?: (player_assists_aggregate_bool_exp | null),player_damages?: (player_damages_bool_exp | null),player_damages_aggregate?: (player_damages_aggregate_bool_exp | null),player_flashes?: (player_flashes_bool_exp | null),player_flashes_aggregate?: (player_flashes_aggregate_bool_exp | null),player_kills?: (player_kills_bool_exp | null),player_kills_aggregate?: (player_kills_aggregate_bool_exp | null),player_objectives?: (player_objectives_bool_exp | null),player_objectives_aggregate?: (player_objectives_aggregate_bool_exp | null),player_unused_utilities?: (player_unused_utility_bool_exp | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_bool_exp | null),player_utility?: (player_utility_bool_exp | null),player_utility_aggregate?: (player_utility_aggregate_bool_exp | null),region?: (String_comparison_exp | null),region_veto_picking_lineup_id?: (uuid_comparison_exp | null),region_veto_picks?: (match_region_veto_picks_bool_exp | null),region_veto_picks_aggregate?: (match_region_veto_picks_aggregate_bool_exp | null),requested_organizer?: (Boolean_comparison_exp | null),scheduled_at?: (timestamptz_comparison_exp | null),server?: (servers_bool_exp | null),server_id?: (uuid_comparison_exp | null),server_region?: (String_comparison_exp | null),server_type?: (String_comparison_exp | null),started_at?: (timestamptz_comparison_exp | null),status?: (e_match_status_enum_comparison_exp | null),teams?: (teams_bool_exp | null),tournament_brackets?: (tournament_brackets_bool_exp | null),tournament_brackets_aggregate?: (tournament_brackets_aggregate_bool_exp | null),tv_connection_link?: (String_comparison_exp | null),tv_connection_string?: (String_comparison_exp | null),winner?: (match_lineups_bool_exp | null),winning_lineup_id?: (uuid_comparison_exp | null)}
+export interface matches_bool_exp {_and?: (matches_bool_exp[] | null),_not?: (matches_bool_exp | null),_or?: (matches_bool_exp[] | null),can_assign_server?: (Boolean_comparison_exp | null),can_cancel?: (Boolean_comparison_exp | null),can_check_in?: (Boolean_comparison_exp | null),can_schedule?: (Boolean_comparison_exp | null),can_start?: (Boolean_comparison_exp | null),cancels_at?: (timestamptz_comparison_exp | null),connection_link?: (String_comparison_exp | null),connection_string?: (String_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),current_match_map_id?: (uuid_comparison_exp | null),demos?: (match_map_demos_bool_exp | null),demos_aggregate?: (match_map_demos_aggregate_bool_exp | null),e_match_status?: (e_match_status_bool_exp | null),e_region?: (server_regions_bool_exp | null),ended_at?: (timestamptz_comparison_exp | null),id?: (uuid_comparison_exp | null),invite_code?: (String_comparison_exp | null),invites?: (match_invites_bool_exp | null),invites_aggregate?: (match_invites_aggregate_bool_exp | null),is_captain?: (Boolean_comparison_exp | null),is_coach?: (Boolean_comparison_exp | null),is_in_lineup?: (Boolean_comparison_exp | null),is_match_server_available?: (Boolean_comparison_exp | null),is_organizer?: (Boolean_comparison_exp | null),is_server_online?: (Boolean_comparison_exp | null),is_tournament_match?: (Boolean_comparison_exp | null),label?: (String_comparison_exp | null),lineup_1?: (match_lineups_bool_exp | null),lineup_1_id?: (uuid_comparison_exp | null),lineup_2?: (match_lineups_bool_exp | null),lineup_2_id?: (uuid_comparison_exp | null),lineup_counts?: (json_comparison_exp | null),map_veto_picking_lineup_id?: (uuid_comparison_exp | null),map_veto_picks?: (match_map_veto_picks_bool_exp | null),map_veto_picks_aggregate?: (match_map_veto_picks_aggregate_bool_exp | null),map_veto_type?: (String_comparison_exp | null),match_maps?: (match_maps_bool_exp | null),match_maps_aggregate?: (match_maps_aggregate_bool_exp | null),match_options_id?: (uuid_comparison_exp | null),max_players_per_lineup?: (Int_comparison_exp | null),min_players_per_lineup?: (Int_comparison_exp | null),options?: (match_options_bool_exp | null),organizer?: (players_bool_exp | null),organizer_steam_id?: (bigint_comparison_exp | null),password?: (String_comparison_exp | null),player_assists?: (player_assists_bool_exp | null),player_assists_aggregate?: (player_assists_aggregate_bool_exp | null),player_damages?: (player_damages_bool_exp | null),player_damages_aggregate?: (player_damages_aggregate_bool_exp | null),player_flashes?: (player_flashes_bool_exp | null),player_flashes_aggregate?: (player_flashes_aggregate_bool_exp | null),player_kills?: (player_kills_bool_exp | null),player_kills_aggregate?: (player_kills_aggregate_bool_exp | null),player_objectives?: (player_objectives_bool_exp | null),player_objectives_aggregate?: (player_objectives_aggregate_bool_exp | null),player_unused_utilities?: (player_unused_utility_bool_exp | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_bool_exp | null),player_utility?: (player_utility_bool_exp | null),player_utility_aggregate?: (player_utility_aggregate_bool_exp | null),region?: (String_comparison_exp | null),region_veto_picking_lineup_id?: (uuid_comparison_exp | null),region_veto_picks?: (match_region_veto_picks_bool_exp | null),region_veto_picks_aggregate?: (match_region_veto_picks_aggregate_bool_exp | null),requested_organizer?: (Boolean_comparison_exp | null),scheduled_at?: (timestamptz_comparison_exp | null),server?: (servers_bool_exp | null),server_id?: (uuid_comparison_exp | null),server_region?: (String_comparison_exp | null),server_type?: (String_comparison_exp | null),started_at?: (timestamptz_comparison_exp | null),status?: (e_match_status_enum_comparison_exp | null),teams?: (teams_bool_exp | null),tournament_brackets?: (tournament_brackets_bool_exp | null),tournament_brackets_aggregate?: (tournament_brackets_aggregate_bool_exp | null),tv_connection_link?: (String_comparison_exp | null),tv_connection_string?: (String_comparison_exp | null),winner?: (match_lineups_bool_exp | null),winning_lineup_id?: (uuid_comparison_exp | null)}
 
 
 /** input type for incrementing numeric columns in table "matches" */
@@ -18597,7 +19062,7 @@ export interface matches_inc_input {organizer_steam_id?: (Scalars['bigint'] | nu
 
 
 /** input type for inserting data into table "matches" */
-export interface matches_insert_input {cancels_at?: (Scalars['timestamptz'] | null),created_at?: (Scalars['timestamptz'] | null),demos?: (match_map_demos_arr_rel_insert_input | null),e_match_status?: (e_match_status_obj_rel_insert_input | null),e_region?: (server_regions_obj_rel_insert_input | null),ended_at?: (Scalars['timestamptz'] | null),id?: (Scalars['uuid'] | null),label?: (Scalars['String'] | null),lineup_1?: (match_lineups_obj_rel_insert_input | null),lineup_1_id?: (Scalars['uuid'] | null),lineup_2?: (match_lineups_obj_rel_insert_input | null),lineup_2_id?: (Scalars['uuid'] | null),map_veto_picks?: (match_map_veto_picks_arr_rel_insert_input | null),match_maps?: (match_maps_arr_rel_insert_input | null),match_options_id?: (Scalars['uuid'] | null),options?: (match_options_obj_rel_insert_input | null),organizer?: (players_obj_rel_insert_input | null),organizer_steam_id?: (Scalars['bigint'] | null),password?: (Scalars['String'] | null),player_assists?: (player_assists_arr_rel_insert_input | null),player_damages?: (player_damages_arr_rel_insert_input | null),player_flashes?: (player_flashes_arr_rel_insert_input | null),player_kills?: (player_kills_arr_rel_insert_input | null),player_objectives?: (player_objectives_arr_rel_insert_input | null),player_unused_utilities?: (player_unused_utility_arr_rel_insert_input | null),player_utility?: (player_utility_arr_rel_insert_input | null),region?: (Scalars['String'] | null),region_veto_picks?: (match_region_veto_picks_arr_rel_insert_input | null),scheduled_at?: (Scalars['timestamptz'] | null),server?: (servers_obj_rel_insert_input | null),server_id?: (Scalars['uuid'] | null),started_at?: (Scalars['timestamptz'] | null),status?: (e_match_status_enum | null),tournament_brackets?: (tournament_brackets_arr_rel_insert_input | null),winner?: (match_lineups_obj_rel_insert_input | null),winning_lineup_id?: (Scalars['uuid'] | null)}
+export interface matches_insert_input {cancels_at?: (Scalars['timestamptz'] | null),created_at?: (Scalars['timestamptz'] | null),demos?: (match_map_demos_arr_rel_insert_input | null),e_match_status?: (e_match_status_obj_rel_insert_input | null),e_region?: (server_regions_obj_rel_insert_input | null),ended_at?: (Scalars['timestamptz'] | null),id?: (Scalars['uuid'] | null),invites?: (match_invites_arr_rel_insert_input | null),label?: (Scalars['String'] | null),lineup_1?: (match_lineups_obj_rel_insert_input | null),lineup_1_id?: (Scalars['uuid'] | null),lineup_2?: (match_lineups_obj_rel_insert_input | null),lineup_2_id?: (Scalars['uuid'] | null),map_veto_picks?: (match_map_veto_picks_arr_rel_insert_input | null),match_maps?: (match_maps_arr_rel_insert_input | null),match_options_id?: (Scalars['uuid'] | null),options?: (match_options_obj_rel_insert_input | null),organizer?: (players_obj_rel_insert_input | null),organizer_steam_id?: (Scalars['bigint'] | null),password?: (Scalars['String'] | null),player_assists?: (player_assists_arr_rel_insert_input | null),player_damages?: (player_damages_arr_rel_insert_input | null),player_flashes?: (player_flashes_arr_rel_insert_input | null),player_kills?: (player_kills_arr_rel_insert_input | null),player_objectives?: (player_objectives_arr_rel_insert_input | null),player_unused_utilities?: (player_unused_utility_arr_rel_insert_input | null),player_utility?: (player_utility_arr_rel_insert_input | null),region?: (Scalars['String'] | null),region_veto_picks?: (match_region_veto_picks_arr_rel_insert_input | null),scheduled_at?: (Scalars['timestamptz'] | null),server?: (servers_obj_rel_insert_input | null),server_id?: (Scalars['uuid'] | null),started_at?: (Scalars['timestamptz'] | null),status?: (e_match_status_enum | null),tournament_brackets?: (tournament_brackets_arr_rel_insert_input | null),winner?: (match_lineups_obj_rel_insert_input | null),winning_lineup_id?: (Scalars['uuid'] | null)}
 
 
 /** aggregate max on columns */
@@ -18726,7 +19191,7 @@ export interface matches_on_conflict {constraint: matches_constraint,update_colu
 
 
 /** Ordering options when selecting data from "matches". */
-export interface matches_order_by {can_assign_server?: (order_by | null),can_cancel?: (order_by | null),can_check_in?: (order_by | null),can_schedule?: (order_by | null),can_start?: (order_by | null),cancels_at?: (order_by | null),connection_link?: (order_by | null),connection_string?: (order_by | null),created_at?: (order_by | null),current_match_map_id?: (order_by | null),demos_aggregate?: (match_map_demos_aggregate_order_by | null),e_match_status?: (e_match_status_order_by | null),e_region?: (server_regions_order_by | null),ended_at?: (order_by | null),id?: (order_by | null),invite_code?: (order_by | null),is_captain?: (order_by | null),is_coach?: (order_by | null),is_in_lineup?: (order_by | null),is_match_server_available?: (order_by | null),is_organizer?: (order_by | null),is_server_online?: (order_by | null),is_tournament_match?: (order_by | null),label?: (order_by | null),lineup_1?: (match_lineups_order_by | null),lineup_1_id?: (order_by | null),lineup_2?: (match_lineups_order_by | null),lineup_2_id?: (order_by | null),lineup_counts?: (order_by | null),map_veto_picking_lineup_id?: (order_by | null),map_veto_picks_aggregate?: (match_map_veto_picks_aggregate_order_by | null),map_veto_type?: (order_by | null),match_maps_aggregate?: (match_maps_aggregate_order_by | null),match_options_id?: (order_by | null),max_players_per_lineup?: (order_by | null),min_players_per_lineup?: (order_by | null),options?: (match_options_order_by | null),organizer?: (players_order_by | null),organizer_steam_id?: (order_by | null),password?: (order_by | null),player_assists_aggregate?: (player_assists_aggregate_order_by | null),player_damages_aggregate?: (player_damages_aggregate_order_by | null),player_flashes_aggregate?: (player_flashes_aggregate_order_by | null),player_kills_aggregate?: (player_kills_aggregate_order_by | null),player_objectives_aggregate?: (player_objectives_aggregate_order_by | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_order_by | null),player_utility_aggregate?: (player_utility_aggregate_order_by | null),region?: (order_by | null),region_veto_picking_lineup_id?: (order_by | null),region_veto_picks_aggregate?: (match_region_veto_picks_aggregate_order_by | null),requested_organizer?: (order_by | null),scheduled_at?: (order_by | null),server?: (servers_order_by | null),server_id?: (order_by | null),server_region?: (order_by | null),server_type?: (order_by | null),started_at?: (order_by | null),status?: (order_by | null),teams_aggregate?: (teams_aggregate_order_by | null),tournament_brackets_aggregate?: (tournament_brackets_aggregate_order_by | null),tv_connection_link?: (order_by | null),tv_connection_string?: (order_by | null),winner?: (match_lineups_order_by | null),winning_lineup_id?: (order_by | null)}
+export interface matches_order_by {can_assign_server?: (order_by | null),can_cancel?: (order_by | null),can_check_in?: (order_by | null),can_schedule?: (order_by | null),can_start?: (order_by | null),cancels_at?: (order_by | null),connection_link?: (order_by | null),connection_string?: (order_by | null),created_at?: (order_by | null),current_match_map_id?: (order_by | null),demos_aggregate?: (match_map_demos_aggregate_order_by | null),e_match_status?: (e_match_status_order_by | null),e_region?: (server_regions_order_by | null),ended_at?: (order_by | null),id?: (order_by | null),invite_code?: (order_by | null),invites_aggregate?: (match_invites_aggregate_order_by | null),is_captain?: (order_by | null),is_coach?: (order_by | null),is_in_lineup?: (order_by | null),is_match_server_available?: (order_by | null),is_organizer?: (order_by | null),is_server_online?: (order_by | null),is_tournament_match?: (order_by | null),label?: (order_by | null),lineup_1?: (match_lineups_order_by | null),lineup_1_id?: (order_by | null),lineup_2?: (match_lineups_order_by | null),lineup_2_id?: (order_by | null),lineup_counts?: (order_by | null),map_veto_picking_lineup_id?: (order_by | null),map_veto_picks_aggregate?: (match_map_veto_picks_aggregate_order_by | null),map_veto_type?: (order_by | null),match_maps_aggregate?: (match_maps_aggregate_order_by | null),match_options_id?: (order_by | null),max_players_per_lineup?: (order_by | null),min_players_per_lineup?: (order_by | null),options?: (match_options_order_by | null),organizer?: (players_order_by | null),organizer_steam_id?: (order_by | null),password?: (order_by | null),player_assists_aggregate?: (player_assists_aggregate_order_by | null),player_damages_aggregate?: (player_damages_aggregate_order_by | null),player_flashes_aggregate?: (player_flashes_aggregate_order_by | null),player_kills_aggregate?: (player_kills_aggregate_order_by | null),player_objectives_aggregate?: (player_objectives_aggregate_order_by | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_order_by | null),player_utility_aggregate?: (player_utility_aggregate_order_by | null),region?: (order_by | null),region_veto_picking_lineup_id?: (order_by | null),region_veto_picks_aggregate?: (match_region_veto_picks_aggregate_order_by | null),requested_organizer?: (order_by | null),scheduled_at?: (order_by | null),server?: (servers_order_by | null),server_id?: (order_by | null),server_region?: (order_by | null),server_type?: (order_by | null),started_at?: (order_by | null),status?: (order_by | null),teams_aggregate?: (teams_aggregate_order_by | null),tournament_brackets_aggregate?: (tournament_brackets_aggregate_order_by | null),tv_connection_link?: (order_by | null),tv_connection_string?: (order_by | null),winner?: (match_lineups_order_by | null),winning_lineup_id?: (order_by | null)}
 
 
 /** primary key columns input for table: matches */
@@ -19147,6 +19612,12 @@ export interface mutation_rootGenqlSelection{
     where: maps_bool_exp} })
     /** delete single row from the table: "maps" */
     delete_maps_by_pk?: (mapsGenqlSelection & { __args: {id: Scalars['uuid']} })
+    /** delete data from the table: "match_invites" */
+    delete_match_invites?: (match_invites_mutation_responseGenqlSelection & { __args: {
+    /** filter the rows which have to be deleted */
+    where: match_invites_bool_exp} })
+    /** delete single row from the table: "match_invites" */
+    delete_match_invites_by_pk?: (match_invitesGenqlSelection & { __args: {id: Scalars['uuid']} })
     /** delete data from the table: "match_lineup_players" */
     delete_match_lineup_players?: (match_lineup_players_mutation_responseGenqlSelection & { __args: {
     /** filter the rows which have to be deleted */
@@ -19695,6 +20166,18 @@ export interface mutation_rootGenqlSelection{
     object: maps_insert_input, 
     /** upsert condition */
     on_conflict?: (maps_on_conflict | null)} })
+    /** insert data into the table: "match_invites" */
+    insert_match_invites?: (match_invites_mutation_responseGenqlSelection & { __args: {
+    /** the rows to be inserted */
+    objects: match_invites_insert_input[], 
+    /** upsert condition */
+    on_conflict?: (match_invites_on_conflict | null)} })
+    /** insert a single row into the table: "match_invites" */
+    insert_match_invites_one?: (match_invitesGenqlSelection & { __args: {
+    /** the row to be inserted */
+    object: match_invites_insert_input, 
+    /** upsert condition */
+    on_conflict?: (match_invites_on_conflict | null)} })
     /** insert data into the table: "match_lineup_players" */
     insert_match_lineup_players?: (match_lineup_players_mutation_responseGenqlSelection & { __args: {
     /** the rows to be inserted */
@@ -20542,6 +21025,24 @@ export interface mutation_rootGenqlSelection{
     update_maps_many?: (maps_mutation_responseGenqlSelection & { __args: {
     /** updates to execute, in order */
     updates: maps_updates[]} })
+    /** update data of the table: "match_invites" */
+    update_match_invites?: (match_invites_mutation_responseGenqlSelection & { __args: {
+    /** increments the numeric columns with given value of the filtered values */
+    _inc?: (match_invites_inc_input | null), 
+    /** sets the columns of the filtered rows to the given values */
+    _set?: (match_invites_set_input | null), 
+    /** filter the rows which have to be updated */
+    where: match_invites_bool_exp} })
+    /** update single row of the table: "match_invites" */
+    update_match_invites_by_pk?: (match_invitesGenqlSelection & { __args: {
+    /** increments the numeric columns with given value of the filtered values */
+    _inc?: (match_invites_inc_input | null), 
+    /** sets the columns of the filtered rows to the given values */
+    _set?: (match_invites_set_input | null), pk_columns: match_invites_pk_columns_input} })
+    /** update multiples rows of table: "match_invites" */
+    update_match_invites_many?: (match_invites_mutation_responseGenqlSelection & { __args: {
+    /** updates to execute, in order */
+    updates: match_invites_updates[]} })
     /** update data of the table: "match_lineup_players" */
     update_match_lineup_players?: (match_lineup_players_mutation_responseGenqlSelection & { __args: {
     /** increments the numeric columns with given value of the filtered values */
@@ -24503,6 +25004,7 @@ export interface playersGenqlSelection{
     order_by?: (player_kills_order_by[] | null), 
     /** filter the rows returned */
     where?: (player_kills_bool_exp | null)} })
+    language?: boolean | number
     /** An array relationship */
     lobby_players?: (lobby_playersGenqlSelection & { __args?: {
     /** distinct select on columns */
@@ -24893,7 +25395,7 @@ export interface players_avg_fieldsGenqlSelection{
 
 
 /** Boolean expression to filter rows from the table "players". All fields are combined with a logical 'AND'. */
-export interface players_bool_exp {_and?: (players_bool_exp[] | null),_not?: (players_bool_exp | null),_or?: (players_bool_exp[] | null),abandoned_matches?: (abandoned_matches_bool_exp | null),abandoned_matches_aggregate?: (abandoned_matches_aggregate_bool_exp | null),assists?: (player_assists_bool_exp | null),assists_aggregate?: (player_assists_aggregate_bool_exp | null),assited_by_players?: (player_assists_bool_exp | null),assited_by_players_aggregate?: (player_assists_aggregate_bool_exp | null),avatar_url?: (String_comparison_exp | null),coach_lineups?: (match_lineups_bool_exp | null),coach_lineups_aggregate?: (match_lineups_aggregate_bool_exp | null),country?: (String_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),current_lobby_id?: (uuid_comparison_exp | null),damage_dealt?: (player_damages_bool_exp | null),damage_dealt_aggregate?: (player_damages_aggregate_bool_exp | null),damage_taken?: (player_damages_bool_exp | null),damage_taken_aggregate?: (player_damages_aggregate_bool_exp | null),deaths?: (player_kills_bool_exp | null),deaths_aggregate?: (player_kills_aggregate_bool_exp | null),discord_id?: (String_comparison_exp | null),elo?: (numeric_comparison_exp | null),elo_history?: (player_elo_bool_exp | null),elo_history_aggregate?: (player_elo_aggregate_bool_exp | null),flashed_by_players?: (player_flashes_bool_exp | null),flashed_by_players_aggregate?: (player_flashes_aggregate_bool_exp | null),flashed_players?: (player_flashes_bool_exp | null),flashed_players_aggregate?: (player_flashes_aggregate_bool_exp | null),friends?: (my_friends_bool_exp | null),friends_aggregate?: (my_friends_aggregate_bool_exp | null),invited_players?: (team_invites_bool_exp | null),invited_players_aggregate?: (team_invites_aggregate_bool_exp | null),is_banned?: (Boolean_comparison_exp | null),is_gagged?: (Boolean_comparison_exp | null),is_in_another_match?: (Boolean_comparison_exp | null),is_muted?: (Boolean_comparison_exp | null),kills?: (player_kills_bool_exp | null),kills_aggregate?: (player_kills_aggregate_bool_exp | null),lobby_players?: (lobby_players_bool_exp | null),lobby_players_aggregate?: (lobby_players_aggregate_bool_exp | null),matches?: (matches_bool_exp | null),matchmaking_cooldown?: (timestamptz_comparison_exp | null),multi_kills?: (v_player_multi_kills_bool_exp | null),multi_kills_aggregate?: (v_player_multi_kills_aggregate_bool_exp | null),name?: (String_comparison_exp | null),name_registered?: (Boolean_comparison_exp | null),notifications?: (notifications_bool_exp | null),notifications_aggregate?: (notifications_aggregate_bool_exp | null),objectives?: (player_objectives_bool_exp | null),objectives_aggregate?: (player_objectives_aggregate_bool_exp | null),owned_teams?: (teams_bool_exp | null),owned_teams_aggregate?: (teams_aggregate_bool_exp | null),player_lineup?: (match_lineup_players_bool_exp | null),player_lineup_aggregate?: (match_lineup_players_aggregate_bool_exp | null),player_unused_utilities?: (player_unused_utility_bool_exp | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_bool_exp | null),profile_url?: (String_comparison_exp | null),role?: (e_player_roles_enum_comparison_exp | null),steam_id?: (bigint_comparison_exp | null),team_invites?: (team_invites_bool_exp | null),team_invites_aggregate?: (team_invites_aggregate_bool_exp | null),team_members?: (team_roster_bool_exp | null),team_members_aggregate?: (team_roster_aggregate_bool_exp | null),teams?: (teams_bool_exp | null),total_matches?: (Int_comparison_exp | null),tournament_organizers?: (tournament_organizers_bool_exp | null),tournament_organizers_aggregate?: (tournament_organizers_aggregate_bool_exp | null),tournament_rosters?: (tournament_team_roster_bool_exp | null),tournament_rosters_aggregate?: (tournament_team_roster_aggregate_bool_exp | null),tournaments?: (tournaments_bool_exp | null),tournaments_aggregate?: (tournaments_aggregate_bool_exp | null),utility_thrown?: (player_utility_bool_exp | null),utility_thrown_aggregate?: (player_utility_aggregate_bool_exp | null)}
+export interface players_bool_exp {_and?: (players_bool_exp[] | null),_not?: (players_bool_exp | null),_or?: (players_bool_exp[] | null),abandoned_matches?: (abandoned_matches_bool_exp | null),abandoned_matches_aggregate?: (abandoned_matches_aggregate_bool_exp | null),assists?: (player_assists_bool_exp | null),assists_aggregate?: (player_assists_aggregate_bool_exp | null),assited_by_players?: (player_assists_bool_exp | null),assited_by_players_aggregate?: (player_assists_aggregate_bool_exp | null),avatar_url?: (String_comparison_exp | null),coach_lineups?: (match_lineups_bool_exp | null),coach_lineups_aggregate?: (match_lineups_aggregate_bool_exp | null),country?: (String_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),current_lobby_id?: (uuid_comparison_exp | null),damage_dealt?: (player_damages_bool_exp | null),damage_dealt_aggregate?: (player_damages_aggregate_bool_exp | null),damage_taken?: (player_damages_bool_exp | null),damage_taken_aggregate?: (player_damages_aggregate_bool_exp | null),deaths?: (player_kills_bool_exp | null),deaths_aggregate?: (player_kills_aggregate_bool_exp | null),discord_id?: (String_comparison_exp | null),elo?: (numeric_comparison_exp | null),elo_history?: (player_elo_bool_exp | null),elo_history_aggregate?: (player_elo_aggregate_bool_exp | null),flashed_by_players?: (player_flashes_bool_exp | null),flashed_by_players_aggregate?: (player_flashes_aggregate_bool_exp | null),flashed_players?: (player_flashes_bool_exp | null),flashed_players_aggregate?: (player_flashes_aggregate_bool_exp | null),friends?: (my_friends_bool_exp | null),friends_aggregate?: (my_friends_aggregate_bool_exp | null),invited_players?: (team_invites_bool_exp | null),invited_players_aggregate?: (team_invites_aggregate_bool_exp | null),is_banned?: (Boolean_comparison_exp | null),is_gagged?: (Boolean_comparison_exp | null),is_in_another_match?: (Boolean_comparison_exp | null),is_muted?: (Boolean_comparison_exp | null),kills?: (player_kills_bool_exp | null),kills_aggregate?: (player_kills_aggregate_bool_exp | null),language?: (String_comparison_exp | null),lobby_players?: (lobby_players_bool_exp | null),lobby_players_aggregate?: (lobby_players_aggregate_bool_exp | null),matches?: (matches_bool_exp | null),matchmaking_cooldown?: (timestamptz_comparison_exp | null),multi_kills?: (v_player_multi_kills_bool_exp | null),multi_kills_aggregate?: (v_player_multi_kills_aggregate_bool_exp | null),name?: (String_comparison_exp | null),name_registered?: (Boolean_comparison_exp | null),notifications?: (notifications_bool_exp | null),notifications_aggregate?: (notifications_aggregate_bool_exp | null),objectives?: (player_objectives_bool_exp | null),objectives_aggregate?: (player_objectives_aggregate_bool_exp | null),owned_teams?: (teams_bool_exp | null),owned_teams_aggregate?: (teams_aggregate_bool_exp | null),player_lineup?: (match_lineup_players_bool_exp | null),player_lineup_aggregate?: (match_lineup_players_aggregate_bool_exp | null),player_unused_utilities?: (player_unused_utility_bool_exp | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_bool_exp | null),profile_url?: (String_comparison_exp | null),role?: (e_player_roles_enum_comparison_exp | null),steam_id?: (bigint_comparison_exp | null),team_invites?: (team_invites_bool_exp | null),team_invites_aggregate?: (team_invites_aggregate_bool_exp | null),team_members?: (team_roster_bool_exp | null),team_members_aggregate?: (team_roster_aggregate_bool_exp | null),teams?: (teams_bool_exp | null),total_matches?: (Int_comparison_exp | null),tournament_organizers?: (tournament_organizers_bool_exp | null),tournament_organizers_aggregate?: (tournament_organizers_aggregate_bool_exp | null),tournament_rosters?: (tournament_team_roster_bool_exp | null),tournament_rosters_aggregate?: (tournament_team_roster_aggregate_bool_exp | null),tournaments?: (tournaments_bool_exp | null),tournaments_aggregate?: (tournaments_aggregate_bool_exp | null),utility_thrown?: (player_utility_bool_exp | null),utility_thrown_aggregate?: (player_utility_aggregate_bool_exp | null)}
 
 
 /** input type for incrementing numeric columns in table "players" */
@@ -24901,7 +25403,7 @@ export interface players_inc_input {steam_id?: (Scalars['bigint'] | null)}
 
 
 /** input type for inserting data into table "players" */
-export interface players_insert_input {abandoned_matches?: (abandoned_matches_arr_rel_insert_input | null),assists?: (player_assists_arr_rel_insert_input | null),assited_by_players?: (player_assists_arr_rel_insert_input | null),avatar_url?: (Scalars['String'] | null),coach_lineups?: (match_lineups_arr_rel_insert_input | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),damage_dealt?: (player_damages_arr_rel_insert_input | null),damage_taken?: (player_damages_arr_rel_insert_input | null),deaths?: (player_kills_arr_rel_insert_input | null),discord_id?: (Scalars['String'] | null),elo_history?: (player_elo_arr_rel_insert_input | null),flashed_by_players?: (player_flashes_arr_rel_insert_input | null),flashed_players?: (player_flashes_arr_rel_insert_input | null),friends?: (my_friends_arr_rel_insert_input | null),invited_players?: (team_invites_arr_rel_insert_input | null),kills?: (player_kills_arr_rel_insert_input | null),lobby_players?: (lobby_players_arr_rel_insert_input | null),multi_kills?: (v_player_multi_kills_arr_rel_insert_input | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),notifications?: (notifications_arr_rel_insert_input | null),objectives?: (player_objectives_arr_rel_insert_input | null),owned_teams?: (teams_arr_rel_insert_input | null),player_lineup?: (match_lineup_players_arr_rel_insert_input | null),player_unused_utilities?: (player_unused_utility_arr_rel_insert_input | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null),team_invites?: (team_invites_arr_rel_insert_input | null),team_members?: (team_roster_arr_rel_insert_input | null),tournament_organizers?: (tournament_organizers_arr_rel_insert_input | null),tournament_rosters?: (tournament_team_roster_arr_rel_insert_input | null),tournaments?: (tournaments_arr_rel_insert_input | null),utility_thrown?: (player_utility_arr_rel_insert_input | null)}
+export interface players_insert_input {abandoned_matches?: (abandoned_matches_arr_rel_insert_input | null),assists?: (player_assists_arr_rel_insert_input | null),assited_by_players?: (player_assists_arr_rel_insert_input | null),avatar_url?: (Scalars['String'] | null),coach_lineups?: (match_lineups_arr_rel_insert_input | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),damage_dealt?: (player_damages_arr_rel_insert_input | null),damage_taken?: (player_damages_arr_rel_insert_input | null),deaths?: (player_kills_arr_rel_insert_input | null),discord_id?: (Scalars['String'] | null),elo_history?: (player_elo_arr_rel_insert_input | null),flashed_by_players?: (player_flashes_arr_rel_insert_input | null),flashed_players?: (player_flashes_arr_rel_insert_input | null),friends?: (my_friends_arr_rel_insert_input | null),invited_players?: (team_invites_arr_rel_insert_input | null),kills?: (player_kills_arr_rel_insert_input | null),language?: (Scalars['String'] | null),lobby_players?: (lobby_players_arr_rel_insert_input | null),multi_kills?: (v_player_multi_kills_arr_rel_insert_input | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),notifications?: (notifications_arr_rel_insert_input | null),objectives?: (player_objectives_arr_rel_insert_input | null),owned_teams?: (teams_arr_rel_insert_input | null),player_lineup?: (match_lineup_players_arr_rel_insert_input | null),player_unused_utilities?: (player_unused_utility_arr_rel_insert_input | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null),team_invites?: (team_invites_arr_rel_insert_input | null),team_members?: (team_roster_arr_rel_insert_input | null),tournament_organizers?: (tournament_organizers_arr_rel_insert_input | null),tournament_rosters?: (tournament_team_roster_arr_rel_insert_input | null),tournaments?: (tournaments_arr_rel_insert_input | null),utility_thrown?: (player_utility_arr_rel_insert_input | null)}
 
 
 /** aggregate max on columns */
@@ -24914,6 +25416,7 @@ export interface players_max_fieldsGenqlSelection{
     discord_id?: boolean | number
     /** A computed field, executes function "get_player_elo" */
     elo?: boolean | number
+    language?: boolean | number
     /** A computed field, executes function "get_player_matchmaking_cooldown" */
     matchmaking_cooldown?: boolean | number
     name?: boolean | number
@@ -24936,6 +25439,7 @@ export interface players_min_fieldsGenqlSelection{
     discord_id?: boolean | number
     /** A computed field, executes function "get_player_elo" */
     elo?: boolean | number
+    language?: boolean | number
     /** A computed field, executes function "get_player_matchmaking_cooldown" */
     matchmaking_cooldown?: boolean | number
     name?: boolean | number
@@ -24970,7 +25474,7 @@ export interface players_on_conflict {constraint: players_constraint,update_colu
 
 
 /** Ordering options when selecting data from "players". */
-export interface players_order_by {abandoned_matches_aggregate?: (abandoned_matches_aggregate_order_by | null),assists_aggregate?: (player_assists_aggregate_order_by | null),assited_by_players_aggregate?: (player_assists_aggregate_order_by | null),avatar_url?: (order_by | null),coach_lineups_aggregate?: (match_lineups_aggregate_order_by | null),country?: (order_by | null),created_at?: (order_by | null),current_lobby_id?: (order_by | null),damage_dealt_aggregate?: (player_damages_aggregate_order_by | null),damage_taken_aggregate?: (player_damages_aggregate_order_by | null),deaths_aggregate?: (player_kills_aggregate_order_by | null),discord_id?: (order_by | null),elo?: (order_by | null),elo_history_aggregate?: (player_elo_aggregate_order_by | null),flashed_by_players_aggregate?: (player_flashes_aggregate_order_by | null),flashed_players_aggregate?: (player_flashes_aggregate_order_by | null),friends_aggregate?: (my_friends_aggregate_order_by | null),invited_players_aggregate?: (team_invites_aggregate_order_by | null),is_banned?: (order_by | null),is_gagged?: (order_by | null),is_in_another_match?: (order_by | null),is_muted?: (order_by | null),kills_aggregate?: (player_kills_aggregate_order_by | null),lobby_players_aggregate?: (lobby_players_aggregate_order_by | null),matches_aggregate?: (matches_aggregate_order_by | null),matchmaking_cooldown?: (order_by | null),multi_kills_aggregate?: (v_player_multi_kills_aggregate_order_by | null),name?: (order_by | null),name_registered?: (order_by | null),notifications_aggregate?: (notifications_aggregate_order_by | null),objectives_aggregate?: (player_objectives_aggregate_order_by | null),owned_teams_aggregate?: (teams_aggregate_order_by | null),player_lineup_aggregate?: (match_lineup_players_aggregate_order_by | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_order_by | null),profile_url?: (order_by | null),role?: (order_by | null),steam_id?: (order_by | null),team_invites_aggregate?: (team_invites_aggregate_order_by | null),team_members_aggregate?: (team_roster_aggregate_order_by | null),teams_aggregate?: (teams_aggregate_order_by | null),total_matches?: (order_by | null),tournament_organizers_aggregate?: (tournament_organizers_aggregate_order_by | null),tournament_rosters_aggregate?: (tournament_team_roster_aggregate_order_by | null),tournaments_aggregate?: (tournaments_aggregate_order_by | null),utility_thrown_aggregate?: (player_utility_aggregate_order_by | null)}
+export interface players_order_by {abandoned_matches_aggregate?: (abandoned_matches_aggregate_order_by | null),assists_aggregate?: (player_assists_aggregate_order_by | null),assited_by_players_aggregate?: (player_assists_aggregate_order_by | null),avatar_url?: (order_by | null),coach_lineups_aggregate?: (match_lineups_aggregate_order_by | null),country?: (order_by | null),created_at?: (order_by | null),current_lobby_id?: (order_by | null),damage_dealt_aggregate?: (player_damages_aggregate_order_by | null),damage_taken_aggregate?: (player_damages_aggregate_order_by | null),deaths_aggregate?: (player_kills_aggregate_order_by | null),discord_id?: (order_by | null),elo?: (order_by | null),elo_history_aggregate?: (player_elo_aggregate_order_by | null),flashed_by_players_aggregate?: (player_flashes_aggregate_order_by | null),flashed_players_aggregate?: (player_flashes_aggregate_order_by | null),friends_aggregate?: (my_friends_aggregate_order_by | null),invited_players_aggregate?: (team_invites_aggregate_order_by | null),is_banned?: (order_by | null),is_gagged?: (order_by | null),is_in_another_match?: (order_by | null),is_muted?: (order_by | null),kills_aggregate?: (player_kills_aggregate_order_by | null),language?: (order_by | null),lobby_players_aggregate?: (lobby_players_aggregate_order_by | null),matches_aggregate?: (matches_aggregate_order_by | null),matchmaking_cooldown?: (order_by | null),multi_kills_aggregate?: (v_player_multi_kills_aggregate_order_by | null),name?: (order_by | null),name_registered?: (order_by | null),notifications_aggregate?: (notifications_aggregate_order_by | null),objectives_aggregate?: (player_objectives_aggregate_order_by | null),owned_teams_aggregate?: (teams_aggregate_order_by | null),player_lineup_aggregate?: (match_lineup_players_aggregate_order_by | null),player_unused_utilities_aggregate?: (player_unused_utility_aggregate_order_by | null),profile_url?: (order_by | null),role?: (order_by | null),steam_id?: (order_by | null),team_invites_aggregate?: (team_invites_aggregate_order_by | null),team_members_aggregate?: (team_roster_aggregate_order_by | null),teams_aggregate?: (teams_aggregate_order_by | null),total_matches?: (order_by | null),tournament_organizers_aggregate?: (tournament_organizers_aggregate_order_by | null),tournament_rosters_aggregate?: (tournament_team_roster_aggregate_order_by | null),tournaments_aggregate?: (tournaments_aggregate_order_by | null),utility_thrown_aggregate?: (player_utility_aggregate_order_by | null)}
 
 
 /** primary key columns input for table: players */
@@ -24978,7 +25482,7 @@ export interface players_pk_columns_input {steam_id: Scalars['bigint']}
 
 
 /** input type for updating data in table "players" */
-export interface players_set_input {avatar_url?: (Scalars['String'] | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),discord_id?: (Scalars['String'] | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null)}
+export interface players_set_input {avatar_url?: (Scalars['String'] | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),discord_id?: (Scalars['String'] | null),language?: (Scalars['String'] | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null)}
 
 
 /** aggregate stddev on columns */
@@ -25026,7 +25530,7 @@ ordering?: (cursor_ordering | null)}
 
 
 /** Initial value of the column from where the streaming should start */
-export interface players_stream_cursor_value_input {avatar_url?: (Scalars['String'] | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),discord_id?: (Scalars['String'] | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null)}
+export interface players_stream_cursor_value_input {avatar_url?: (Scalars['String'] | null),country?: (Scalars['String'] | null),created_at?: (Scalars['timestamptz'] | null),discord_id?: (Scalars['String'] | null),language?: (Scalars['String'] | null),name?: (Scalars['String'] | null),name_registered?: (Scalars['Boolean'] | null),profile_url?: (Scalars['String'] | null),role?: (e_player_roles_enum | null),steam_id?: (Scalars['bigint'] | null)}
 
 
 /** aggregate sum on columns */
@@ -25815,6 +26319,32 @@ export interface query_rootGenqlSelection{
     where?: (maps_bool_exp | null)} })
     /** fetch data from the table: "maps" using primary key columns */
     maps_by_pk?: (mapsGenqlSelection & { __args: {id: Scalars['uuid']} })
+    /** fetch data from the table: "match_invites" */
+    match_invites?: (match_invitesGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
+    /** fetch aggregated fields from the table: "match_invites" */
+    match_invites_aggregate?: (match_invites_aggregateGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
+    /** fetch data from the table: "match_invites" using primary key columns */
+    match_invites_by_pk?: (match_invitesGenqlSelection & { __args: {id: Scalars['uuid']} })
     /** fetch data from the table: "match_lineup_players" */
     match_lineup_players?: (match_lineup_playersGenqlSelection & { __args?: {
     /** distinct select on columns */
@@ -28560,6 +29090,40 @@ export interface subscription_rootGenqlSelection{
     cursor: (maps_stream_cursor_input | null)[], 
     /** filter the rows returned */
     where?: (maps_bool_exp | null)} })
+    /** fetch data from the table: "match_invites" */
+    match_invites?: (match_invitesGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
+    /** fetch aggregated fields from the table: "match_invites" */
+    match_invites_aggregate?: (match_invites_aggregateGenqlSelection & { __args?: {
+    /** distinct select on columns */
+    distinct_on?: (match_invites_select_column[] | null), 
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null), 
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null), 
+    /** sort the rows by one or more columns */
+    order_by?: (match_invites_order_by[] | null), 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
+    /** fetch data from the table: "match_invites" using primary key columns */
+    match_invites_by_pk?: (match_invitesGenqlSelection & { __args: {id: Scalars['uuid']} })
+    /** fetch data from the table in a streaming manner: "match_invites" */
+    match_invites_stream?: (match_invitesGenqlSelection & { __args: {
+    /** maximum number of rows returned in a single batch */
+    batch_size: Scalars['Int'], 
+    /** cursor to stream the results returned by the query */
+    cursor: (match_invites_stream_cursor_input | null)[], 
+    /** filter the rows returned */
+    where?: (match_invites_bool_exp | null)} })
     /** fetch data from the table: "match_lineup_players" */
     match_lineup_players?: (match_lineup_playersGenqlSelection & { __args?: {
     /** distinct select on columns */
@@ -36281,6 +36845,118 @@ export type SubscriptionGenqlSelection = subscription_rootGenqlSelection
     
 
 
+    const match_invites_possibleTypes: string[] = ['match_invites']
+    export const ismatch_invites = (obj?: { __typename?: any } | null): obj is match_invites => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites"')
+      return match_invites_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_aggregate_possibleTypes: string[] = ['match_invites_aggregate']
+    export const ismatch_invites_aggregate = (obj?: { __typename?: any } | null): obj is match_invites_aggregate => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_aggregate"')
+      return match_invites_aggregate_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_aggregate_fields_possibleTypes: string[] = ['match_invites_aggregate_fields']
+    export const ismatch_invites_aggregate_fields = (obj?: { __typename?: any } | null): obj is match_invites_aggregate_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_aggregate_fields"')
+      return match_invites_aggregate_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_avg_fields_possibleTypes: string[] = ['match_invites_avg_fields']
+    export const ismatch_invites_avg_fields = (obj?: { __typename?: any } | null): obj is match_invites_avg_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_avg_fields"')
+      return match_invites_avg_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_max_fields_possibleTypes: string[] = ['match_invites_max_fields']
+    export const ismatch_invites_max_fields = (obj?: { __typename?: any } | null): obj is match_invites_max_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_max_fields"')
+      return match_invites_max_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_min_fields_possibleTypes: string[] = ['match_invites_min_fields']
+    export const ismatch_invites_min_fields = (obj?: { __typename?: any } | null): obj is match_invites_min_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_min_fields"')
+      return match_invites_min_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_mutation_response_possibleTypes: string[] = ['match_invites_mutation_response']
+    export const ismatch_invites_mutation_response = (obj?: { __typename?: any } | null): obj is match_invites_mutation_response => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_mutation_response"')
+      return match_invites_mutation_response_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_stddev_fields_possibleTypes: string[] = ['match_invites_stddev_fields']
+    export const ismatch_invites_stddev_fields = (obj?: { __typename?: any } | null): obj is match_invites_stddev_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_stddev_fields"')
+      return match_invites_stddev_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_stddev_pop_fields_possibleTypes: string[] = ['match_invites_stddev_pop_fields']
+    export const ismatch_invites_stddev_pop_fields = (obj?: { __typename?: any } | null): obj is match_invites_stddev_pop_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_stddev_pop_fields"')
+      return match_invites_stddev_pop_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_stddev_samp_fields_possibleTypes: string[] = ['match_invites_stddev_samp_fields']
+    export const ismatch_invites_stddev_samp_fields = (obj?: { __typename?: any } | null): obj is match_invites_stddev_samp_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_stddev_samp_fields"')
+      return match_invites_stddev_samp_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_sum_fields_possibleTypes: string[] = ['match_invites_sum_fields']
+    export const ismatch_invites_sum_fields = (obj?: { __typename?: any } | null): obj is match_invites_sum_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_sum_fields"')
+      return match_invites_sum_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_var_pop_fields_possibleTypes: string[] = ['match_invites_var_pop_fields']
+    export const ismatch_invites_var_pop_fields = (obj?: { __typename?: any } | null): obj is match_invites_var_pop_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_var_pop_fields"')
+      return match_invites_var_pop_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_var_samp_fields_possibleTypes: string[] = ['match_invites_var_samp_fields']
+    export const ismatch_invites_var_samp_fields = (obj?: { __typename?: any } | null): obj is match_invites_var_samp_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_var_samp_fields"')
+      return match_invites_var_samp_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const match_invites_variance_fields_possibleTypes: string[] = ['match_invites_variance_fields']
+    export const ismatch_invites_variance_fields = (obj?: { __typename?: any } | null): obj is match_invites_variance_fields => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_invites_variance_fields"')
+      return match_invites_variance_fields_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const match_lineup_players_possibleTypes: string[] = ['match_lineup_players']
     export const ismatch_lineup_players = (obj?: { __typename?: any } | null): obj is match_lineup_players => {
       if (!obj?.__typename) throw new Error('__typename is missing in "ismatch_lineup_players"')
@@ -41536,6 +42212,27 @@ export const enumMapsUpdateColumn = {
    workshop_map_id: 'workshop_map_id' as const
 }
 
+export const enumMatchInvitesConstraint = {
+   match_invites_match_id_invited_by_player_steam_id_steam_id_key: 'match_invites_match_id_invited_by_player_steam_id_steam_id_key' as const,
+   match_invites_pkey: 'match_invites_pkey' as const
+}
+
+export const enumMatchInvitesSelectColumn = {
+   created_at: 'created_at' as const,
+   id: 'id' as const,
+   invited_by_player_steam_id: 'invited_by_player_steam_id' as const,
+   match_id: 'match_id' as const,
+   steam_id: 'steam_id' as const
+}
+
+export const enumMatchInvitesUpdateColumn = {
+   created_at: 'created_at' as const,
+   id: 'id' as const,
+   invited_by_player_steam_id: 'invited_by_player_steam_id' as const,
+   match_id: 'match_id' as const,
+   steam_id: 'steam_id' as const
+}
+
 export const enumMatchLineupPlayersConstraint = {
    match_lineup_players_match_lineup_id_placeholder_name_key: 'match_lineup_players_match_lineup_id_placeholder_name_key' as const,
    match_lineup_players_match_lineup_id_steam_id_key: 'match_lineup_players_match_lineup_id_steam_id_key' as const,
@@ -42146,6 +42843,7 @@ export const enumPlayersSelectColumn = {
    country: 'country' as const,
    created_at: 'created_at' as const,
    discord_id: 'discord_id' as const,
+   language: 'language' as const,
    name: 'name' as const,
    name_registered: 'name_registered' as const,
    profile_url: 'profile_url' as const,
@@ -42158,6 +42856,7 @@ export const enumPlayersUpdateColumn = {
    country: 'country' as const,
    created_at: 'created_at' as const,
    discord_id: 'discord_id' as const,
+   language: 'language' as const,
    name: 'name' as const,
    name_registered: 'name_registered' as const,
    profile_url: 'profile_url' as const,

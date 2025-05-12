@@ -159,6 +159,7 @@ type MeResponse {
   profile_url: String
   discord_id: String
   role: String!
+  language: String
 }
 
 type SuccessOutput {

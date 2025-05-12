@@ -7,8 +7,24 @@ DECLARE
     _lineup_2_id UUID;
     _regions text[];
     available_regions text[];
+    has_region_veto BOOLEAN;
+    user_match_count int;
 BEGIN
-    NEW.cancels_at = NOW() + INTERVAL '1 day';
+    IF (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'user' OR (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'verified_user' THEN
+        SELECT COUNT(*) FROM matches 
+        WHERE organizer_steam_id = (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-user-id')::bigint 
+        AND status NOT IN (
+            'Finished',
+            'Tie',
+            'Canceled',
+            'Forfeit',
+            'Surrendered'   
+        ) INTO user_match_count;
+
+        IF user_match_count > 0 THEN
+            RAISE EXCEPTION 'You have pending matches that need to be finished before you can create a new one' USING ERRCODE = '22000';
+        END IF;
+    END IF;
     
     IF NEW.lineup_1_id IS NULL THEN
         INSERT INTO match_lineups DEFAULT VALUES RETURNING id INTO _lineup_1_id;
@@ -36,6 +52,13 @@ BEGIN
 
     IF array_length(available_regions, 1) = 1 THEN
         NEW.region = available_regions[1];
+    END IF;
+
+
+    select region_veto into has_region_veto from match_options where id = NEW.match_options_id;
+
+    IF has_region_veto = false AND NEW.region IS NULL THEN
+        RAISE EXCEPTION 'Region veto is disabled but no region is selected' USING ERRCODE = '22000';
     END IF;
 
 	RETURN NEW;
@@ -138,6 +161,10 @@ CREATE OR REPLACE FUNCTION public.tau_matches() RETURNS TRIGGER
 BEGIN
     IF is_tournament_match(NEW) THEN
         PERFORM update_tournament_bracket(NEW);
+    END IF;
+
+    if(NEW.status != 'PickingPlayers') THEN
+        DELETE FROM match_invites WHERE match_id = NEW.id;
     END IF;
 
     IF (OLD.status = 'WaitingForCheckIn' AND NEW.status != 'WaitingForCheckIn') THEN

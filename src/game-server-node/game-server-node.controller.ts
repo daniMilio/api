@@ -33,7 +33,10 @@ export class GameServerNodeController {
 
   @HasuraAction()
   public async updateCs(data: { game_server_node_id: string }) {
-    await this.gameServerNodeService.updateCs(data.game_server_node_id);
+    await this.gameServerNodeService.updateCsServer(
+      data.game_server_node_id,
+      true,
+    );
 
     return {
       success: true,
@@ -71,12 +74,20 @@ export class GameServerNodeController {
         curl -fsSL https://tailscale.com/install.sh | sh
 
         if [ -d "/etc/sysctl.d" ]; then
-          echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
-          echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+          if ! grep -q "^net.ipv4.ip_forward = 1" /etc/sysctl.d/99-tailscale.conf; then
+            echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+          fi
+          if ! grep -q "^net.ipv6.conf.all.forwarding = 1" /etc/sysctl.d/99-tailscale.conf; then
+            echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+          fi
           sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
         else
-          echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
-          echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
+          if ! grep -q "^net.ipv4.ip_forward = 1" /etc/sysctl.conf; then
+            echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+          fi
+          if ! grep -q "^net.ipv6.conf.all.forwarding = 1" /etc/sysctl.conf; then
+            echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
+          fi
           sudo sysctl -p /etc/sysctl.conf
         fi
 

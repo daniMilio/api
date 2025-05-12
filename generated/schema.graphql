@@ -54,6 +54,7 @@ type MeResponse {
   avatar_url: String!
   country: String
   discord_id: String
+  language: String
   name: String!
   player: players
   profile_url: String
@@ -7270,6 +7271,414 @@ input maps_updates {
   where: maps_bool_exp!
 }
 
+"""
+columns and relationships of "match_invites"
+"""
+type match_invites {
+  created_at: timestamptz!
+  id: uuid!
+
+  """An object relationship"""
+  invited_by: players!
+  invited_by_player_steam_id: bigint!
+
+  """An object relationship"""
+  match: matches!
+  match_id: uuid!
+
+  """An object relationship"""
+  player: players!
+  steam_id: bigint!
+}
+
+"""
+aggregated selection of "match_invites"
+"""
+type match_invites_aggregate {
+  aggregate: match_invites_aggregate_fields
+  nodes: [match_invites!]!
+}
+
+input match_invites_aggregate_bool_exp {
+  count: match_invites_aggregate_bool_exp_count
+}
+
+input match_invites_aggregate_bool_exp_count {
+  arguments: [match_invites_select_column!]
+  distinct: Boolean
+  filter: match_invites_bool_exp
+  predicate: Int_comparison_exp!
+}
+
+"""
+aggregate fields of "match_invites"
+"""
+type match_invites_aggregate_fields {
+  avg: match_invites_avg_fields
+  count(columns: [match_invites_select_column!], distinct: Boolean): Int!
+  max: match_invites_max_fields
+  min: match_invites_min_fields
+  stddev: match_invites_stddev_fields
+  stddev_pop: match_invites_stddev_pop_fields
+  stddev_samp: match_invites_stddev_samp_fields
+  sum: match_invites_sum_fields
+  var_pop: match_invites_var_pop_fields
+  var_samp: match_invites_var_samp_fields
+  variance: match_invites_variance_fields
+}
+
+"""
+order by aggregate values of table "match_invites"
+"""
+input match_invites_aggregate_order_by {
+  avg: match_invites_avg_order_by
+  count: order_by
+  max: match_invites_max_order_by
+  min: match_invites_min_order_by
+  stddev: match_invites_stddev_order_by
+  stddev_pop: match_invites_stddev_pop_order_by
+  stddev_samp: match_invites_stddev_samp_order_by
+  sum: match_invites_sum_order_by
+  var_pop: match_invites_var_pop_order_by
+  var_samp: match_invites_var_samp_order_by
+  variance: match_invites_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "match_invites"
+"""
+input match_invites_arr_rel_insert_input {
+  data: [match_invites_insert_input!]!
+
+  """upsert condition"""
+  on_conflict: match_invites_on_conflict
+}
+
+"""aggregate avg on columns"""
+type match_invites_avg_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by avg() on columns of table "match_invites"
+"""
+input match_invites_avg_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "match_invites". All fields are combined with a logical 'AND'.
+"""
+input match_invites_bool_exp {
+  _and: [match_invites_bool_exp!]
+  _not: match_invites_bool_exp
+  _or: [match_invites_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  id: uuid_comparison_exp
+  invited_by: players_bool_exp
+  invited_by_player_steam_id: bigint_comparison_exp
+  match: matches_bool_exp
+  match_id: uuid_comparison_exp
+  player: players_bool_exp
+  steam_id: bigint_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "match_invites"
+"""
+enum match_invites_constraint {
+  """
+  unique or primary key constraint on columns "steam_id", "invited_by_player_steam_id", "match_id"
+  """
+  match_invites_match_id_invited_by_player_steam_id_steam_id_key
+
+  """
+  unique or primary key constraint on columns "id"
+  """
+  match_invites_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "match_invites"
+"""
+input match_invites_inc_input {
+  invited_by_player_steam_id: bigint
+  steam_id: bigint
+}
+
+"""
+input type for inserting data into table "match_invites"
+"""
+input match_invites_insert_input {
+  created_at: timestamptz
+  id: uuid
+  invited_by: players_obj_rel_insert_input
+  invited_by_player_steam_id: bigint
+  match: matches_obj_rel_insert_input
+  match_id: uuid
+  player: players_obj_rel_insert_input
+  steam_id: bigint
+}
+
+"""aggregate max on columns"""
+type match_invites_max_fields {
+  created_at: timestamptz
+  id: uuid
+  invited_by_player_steam_id: bigint
+  match_id: uuid
+  steam_id: bigint
+}
+
+"""
+order by max() on columns of table "match_invites"
+"""
+input match_invites_max_order_by {
+  created_at: order_by
+  id: order_by
+  invited_by_player_steam_id: order_by
+  match_id: order_by
+  steam_id: order_by
+}
+
+"""aggregate min on columns"""
+type match_invites_min_fields {
+  created_at: timestamptz
+  id: uuid
+  invited_by_player_steam_id: bigint
+  match_id: uuid
+  steam_id: bigint
+}
+
+"""
+order by min() on columns of table "match_invites"
+"""
+input match_invites_min_order_by {
+  created_at: order_by
+  id: order_by
+  invited_by_player_steam_id: order_by
+  match_id: order_by
+  steam_id: order_by
+}
+
+"""
+response of any mutation on the table "match_invites"
+"""
+type match_invites_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [match_invites!]!
+}
+
+"""
+on_conflict condition type for table "match_invites"
+"""
+input match_invites_on_conflict {
+  constraint: match_invites_constraint!
+  update_columns: [match_invites_update_column!]! = []
+  where: match_invites_bool_exp
+}
+
+"""Ordering options when selecting data from "match_invites"."""
+input match_invites_order_by {
+  created_at: order_by
+  id: order_by
+  invited_by: players_order_by
+  invited_by_player_steam_id: order_by
+  match: matches_order_by
+  match_id: order_by
+  player: players_order_by
+  steam_id: order_by
+}
+
+"""primary key columns input for table: match_invites"""
+input match_invites_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "match_invites"
+"""
+enum match_invites_select_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  invited_by_player_steam_id
+
+  """column name"""
+  match_id
+
+  """column name"""
+  steam_id
+}
+
+"""
+input type for updating data in table "match_invites"
+"""
+input match_invites_set_input {
+  created_at: timestamptz
+  id: uuid
+  invited_by_player_steam_id: bigint
+  match_id: uuid
+  steam_id: bigint
+}
+
+"""aggregate stddev on columns"""
+type match_invites_stddev_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by stddev() on columns of table "match_invites"
+"""
+input match_invites_stddev_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type match_invites_stddev_pop_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "match_invites"
+"""
+input match_invites_stddev_pop_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type match_invites_stddev_samp_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "match_invites"
+"""
+input match_invites_stddev_samp_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""
+Streaming cursor of the table "match_invites"
+"""
+input match_invites_stream_cursor_input {
+  """Stream column input with initial value"""
+  initial_value: match_invites_stream_cursor_value_input!
+
+  """cursor ordering"""
+  ordering: cursor_ordering
+}
+
+"""Initial value of the column from where the streaming should start"""
+input match_invites_stream_cursor_value_input {
+  created_at: timestamptz
+  id: uuid
+  invited_by_player_steam_id: bigint
+  match_id: uuid
+  steam_id: bigint
+}
+
+"""aggregate sum on columns"""
+type match_invites_sum_fields {
+  invited_by_player_steam_id: bigint
+  steam_id: bigint
+}
+
+"""
+order by sum() on columns of table "match_invites"
+"""
+input match_invites_sum_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""
+update columns of table "match_invites"
+"""
+enum match_invites_update_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  invited_by_player_steam_id
+
+  """column name"""
+  match_id
+
+  """column name"""
+  steam_id
+}
+
+input match_invites_updates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: match_invites_inc_input
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: match_invites_set_input
+
+  """filter the rows which have to be updated"""
+  where: match_invites_bool_exp!
+}
+
+"""aggregate var_pop on columns"""
+type match_invites_var_pop_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by var_pop() on columns of table "match_invites"
+"""
+input match_invites_var_pop_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type match_invites_var_samp_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by var_samp() on columns of table "match_invites"
+"""
+input match_invites_var_samp_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
+"""aggregate variance on columns"""
+type match_invites_variance_fields {
+  invited_by_player_steam_id: Float
+  steam_id: Float
+}
+
+"""
+order by variance() on columns of table "match_invites"
+"""
+input match_invites_variance_order_by {
+  invited_by_player_steam_id: order_by
+  steam_id: order_by
+}
+
 """relational table for assigning a players to a match and lineup"""
 type match_lineup_players {
   captain: Boolean!
@@ -11806,6 +12215,42 @@ type matches {
   """
   invite_code: String
 
+  """An array relationship"""
+  invites(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): [match_invites!]!
+
+  """An aggregate relationship"""
+  invites_aggregate(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): match_invites_aggregate!
+
   """
   A computed field, executes function "is_captain"
   """
@@ -12454,6 +12899,8 @@ input matches_bool_exp {
   ended_at: timestamptz_comparison_exp
   id: uuid_comparison_exp
   invite_code: String_comparison_exp
+  invites: match_invites_bool_exp
+  invites_aggregate: match_invites_aggregate_bool_exp
   is_captain: Boolean_comparison_exp
   is_coach: Boolean_comparison_exp
   is_in_lineup: Boolean_comparison_exp
@@ -12558,6 +13005,7 @@ input matches_insert_input {
   e_region: server_regions_obj_rel_insert_input
   ended_at: timestamptz
   id: uuid
+  invites: match_invites_arr_rel_insert_input
   label: String
   lineup_1: match_lineups_obj_rel_insert_input
   lineup_1_id: uuid
@@ -12847,6 +13295,7 @@ input matches_order_by {
   ended_at: order_by
   id: order_by
   invite_code: order_by
+  invites_aggregate: match_invites_aggregate_order_by
   is_captain: order_by
   is_coach: order_by
   is_in_lineup: order_by
@@ -13749,6 +14198,19 @@ type mutation_root {
   delete single row from the table: "maps"
   """
   delete_maps_by_pk(id: uuid!): maps
+
+  """
+  delete data from the table: "match_invites"
+  """
+  delete_match_invites(
+    """filter the rows which have to be deleted"""
+    where: match_invites_bool_exp!
+  ): match_invites_mutation_response
+
+  """
+  delete single row from the table: "match_invites"
+  """
+  delete_match_invites_by_pk(id: uuid!): match_invites
 
   """
   delete data from the table: "match_lineup_players"
@@ -14816,6 +15278,28 @@ type mutation_root {
     """upsert condition"""
     on_conflict: maps_on_conflict
   ): maps
+
+  """
+  insert data into the table: "match_invites"
+  """
+  insert_match_invites(
+    """the rows to be inserted"""
+    objects: [match_invites_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: match_invites_on_conflict
+  ): match_invites_mutation_response
+
+  """
+  insert a single row into the table: "match_invites"
+  """
+  insert_match_invites_one(
+    """the row to be inserted"""
+    object: match_invites_insert_input!
+
+    """upsert condition"""
+    on_conflict: match_invites_on_conflict
+  ): match_invites
 
   """
   insert data into the table: "match_lineup_players"
@@ -16429,6 +16913,40 @@ type mutation_root {
     """updates to execute, in order"""
     updates: [maps_updates!]!
   ): [maps_mutation_response]
+
+  """
+  update data of the table: "match_invites"
+  """
+  update_match_invites(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: match_invites_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: match_invites_set_input
+
+    """filter the rows which have to be updated"""
+    where: match_invites_bool_exp!
+  ): match_invites_mutation_response
+
+  """
+  update single row of the table: "match_invites"
+  """
+  update_match_invites_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: match_invites_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: match_invites_set_input
+    pk_columns: match_invites_pk_columns_input!
+  ): match_invites
+
+  """
+  update multiples rows of table: "match_invites"
+  """
+  update_match_invites_many(
+    """updates to execute, in order"""
+    updates: [match_invites_updates!]!
+  ): [match_invites_mutation_response]
 
   """
   update data of the table: "match_lineup_players"
@@ -23474,6 +23992,7 @@ type players {
     """filter the rows returned"""
     where: player_kills_bool_exp
   ): player_kills_aggregate!
+  language: String
 
   """An array relationship"""
   lobby_players(
@@ -24081,6 +24600,7 @@ input players_bool_exp {
   is_muted: Boolean_comparison_exp
   kills: player_kills_bool_exp
   kills_aggregate: player_kills_aggregate_bool_exp
+  language: String_comparison_exp
   lobby_players: lobby_players_bool_exp
   lobby_players_aggregate: lobby_players_aggregate_bool_exp
   matches: matches_bool_exp
@@ -24166,6 +24686,7 @@ input players_insert_input {
   friends: my_friends_arr_rel_insert_input
   invited_players: team_invites_arr_rel_insert_input
   kills: player_kills_arr_rel_insert_input
+  language: String
   lobby_players: lobby_players_arr_rel_insert_input
   multi_kills: v_player_multi_kills_arr_rel_insert_input
   name: String
@@ -24202,6 +24723,7 @@ type players_max_fields {
   A computed field, executes function "get_player_elo"
   """
   elo: numeric
+  language: String
 
   """
   A computed field, executes function "get_player_matchmaking_cooldown"
@@ -24233,6 +24755,7 @@ type players_min_fields {
   A computed field, executes function "get_player_elo"
   """
   elo: numeric
+  language: String
 
   """
   A computed field, executes function "get_player_matchmaking_cooldown"
@@ -24303,6 +24826,7 @@ input players_order_by {
   is_in_another_match: order_by
   is_muted: order_by
   kills_aggregate: player_kills_aggregate_order_by
+  language: order_by
   lobby_players_aggregate: lobby_players_aggregate_order_by
   matches_aggregate: matches_aggregate_order_by
   matchmaking_cooldown: order_by
@@ -24349,6 +24873,9 @@ enum players_select_column {
   discord_id
 
   """column name"""
+  language
+
+  """column name"""
   name
 
   """column name"""
@@ -24372,6 +24899,7 @@ input players_set_input {
   country: String
   created_at: timestamptz
   discord_id: String
+  language: String
   name: String
   name_registered: Boolean
   profile_url: String
@@ -24438,6 +24966,7 @@ input players_stream_cursor_value_input {
   country: String
   created_at: timestamptz
   discord_id: String
+  language: String
   name: String
   name_registered: Boolean
   profile_url: String
@@ -24474,6 +25003,9 @@ enum players_update_column {
 
   """column name"""
   discord_id
+
+  """column name"""
+  language
 
   """column name"""
   name
@@ -25762,6 +26294,49 @@ type query_root {
 
   """fetch data from the table: "maps" using primary key columns"""
   maps_by_pk(id: uuid!): maps
+
+  """
+  fetch data from the table: "match_invites"
+  """
+  match_invites(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): [match_invites!]!
+
+  """
+  fetch aggregated fields from the table: "match_invites"
+  """
+  match_invites_aggregate(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): match_invites_aggregate!
+
+  """fetch data from the table: "match_invites" using primary key columns"""
+  match_invites_by_pk(id: uuid!): match_invites
 
   """
   fetch data from the table: "match_lineup_players"
@@ -30360,6 +30935,63 @@ type subscription_root {
     """filter the rows returned"""
     where: maps_bool_exp
   ): [maps!]!
+
+  """
+  fetch data from the table: "match_invites"
+  """
+  match_invites(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): [match_invites!]!
+
+  """
+  fetch aggregated fields from the table: "match_invites"
+  """
+  match_invites_aggregate(
+    """distinct select on columns"""
+    distinct_on: [match_invites_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [match_invites_order_by!]
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): match_invites_aggregate!
+
+  """fetch data from the table: "match_invites" using primary key columns"""
+  match_invites_by_pk(id: uuid!): match_invites
+
+  """
+  fetch data from the table in a streaming manner: "match_invites"
+  """
+  match_invites_stream(
+    """maximum number of rows returned in a single batch"""
+    batch_size: Int!
+
+    """cursor to stream the results returned by the query"""
+    cursor: [match_invites_stream_cursor_input]!
+
+    """filter the rows returned"""
+    where: match_invites_bool_exp
+  ): [match_invites!]!
 
   """
   fetch data from the table: "match_lineup_players"
