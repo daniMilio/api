@@ -535,9 +535,6 @@ export class MatchAssistantService {
                         name: "GAME_NODE_SERVER",
                         value: "true",
                       },
-                      ...(!map.workshop_map_id
-                        ? [{ name: "DEFAULT_MAP", value: map.name }]
-                        : []),
                       { name: "SERVER_PORT", value: server.port.toString() },
                       { name: "TV_PORT", value: server.tv_port.toString() },
                       {
@@ -547,8 +544,10 @@ export class MatchAssistantService {
                         ),
                       },
                       { name: "SERVER_PASSWORD", value: match.password },
-                      { name: "EXTRA_GAME_PARAMS", value: "-maxplayers 13" },
-
+                      {
+                        name: "EXTRA_GAME_PARAMS",
+                        value: `-maxplayers 13 ${map.workshop_map_id ? `+host_workshop_map ${map.workshop_map_id}` : `+map ${map.name}`}`,
+                      },
                       { name: "SERVER_ID", value: server.id },
                       {
                         name: "SERVER_API_PASSWORD",
