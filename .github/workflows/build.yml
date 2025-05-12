@@ -39,11 +39,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-${{ steps.platform.outputs.arch }}
             ghcr.io/${{ github.repository_owner }}/api:latest-${{ steps.platform.outputs.arch }}
-      - name: Delete Package Versions
-        uses: actions/delete-package-versions@v5.0.0
-        with:
-          package-name: api
-          package-type: container
   merge:
     needs: docker
     runs-on: ubuntu-latest
@@ -62,3 +57,9 @@ jobs:
           docker buildx imagetools create -t ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }} \
             ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-amd64 \
             # ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-arm64
+      - name: Delete Package Versions
+        uses: actions/delete-package-versions@v5.0.0
+        with:
+          package-name: api
+          package-type: container
+          min-versions-to-keep: 3
