@@ -51,12 +51,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Create manifest list and push
         run: |
-          docker buildx imagetools create -t ghcr.io/${{ github.repository_owner }}/api:latest \
-            ghcr.io/${{ github.repository_owner }}/api:latest-amd64 \
-            # ghcr.io/${{ github.repository_owner }}/api:latest-arm64
-          docker buildx imagetools create -t ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }} \
-            ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-amd64 \
-            # ghcr.io/${{ github.repository_owner }}/api:${{ github.sha }}-arm64
+          docker buildx imagetools create -t ghcr.io/danimilio/api:latest \
+            ghcr.io/danimilio/api:latest-amd64 \
+            # ghcr.io/danimilio/api:latest-arm64
+          docker buildx imagetools create -t ghcr.io/danimilio/api:${{ github.sha }} \
+            ghcr.io/danimilio/api:${{ github.sha }}-amd64 \
+            # ghcr.io/danimilio/api:${{ github.sha }}-arm64
       - name: Delete Package Versions
         uses: actions/delete-package-versions@v5.0.0
         with:
