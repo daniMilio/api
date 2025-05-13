@@ -19,7 +19,6 @@ export class MarkPlayerOffline extends WorkerHost {
       steamId: string;
     }>,
   ): Promise<void> {
-    console.info(`Leaving queue for ${job.data.steamId}`);
     const { steamId } = job.data;
 
     await this.hasura.mutation({
