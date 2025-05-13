@@ -13,6 +13,7 @@ import { RegionSignalData } from "./types/SignalData";
 
 interface WebRTCClient extends WebSocket {
   id: string;
+  sessionId: string;
 }
 
 @WebSocketGateway({
@@ -54,6 +55,7 @@ export class SignalServerGateway {
           signal,
           peerId,
           clientId: client.id,
+          sessionId: client.sessionId,
         },
       }),
     );

@@ -7,6 +7,7 @@ import { SteamSerializer } from "./strategies/SteamSerializer";
 import { DiscordStrategy } from "./strategies/DiscordStrategy";
 import { loggerFactory } from "../utilities/LoggerFactory";
 import { CacheModule } from "../cache/cache.module";
+import { RedisModule } from "../redis/redis.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CacheModule } from "../cache/cache.module";
     }),
     HasuraModule,
     CacheModule,
+    RedisModule,
   ],
   providers: [SteamStrategy, DiscordStrategy, SteamSerializer, loggerFactory()],
   controllers: [AuthController],

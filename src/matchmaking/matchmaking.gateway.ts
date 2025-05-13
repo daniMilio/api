@@ -15,6 +15,7 @@ import { JoinQueueError } from "./utilities/joinQueueError";
 import { HasuraService } from "src/hasura/hasura.service";
 import { isRoleAbove } from "src/utilities/isRoleAbove";
 import { e_player_roles_enum } from "generated";
+import { SocketsGateway } from "src/sockets/sockets.gateway";
 
 @WebSocketGateway({
   path: "/ws/web",
@@ -88,18 +89,59 @@ export class MatchmakingGateway {
 
     let lobby;
     const user = client.user;
-    const { type, regions } = data;
 
     if (!user) {
       return;
     }
+
+    const latencyResults = await this.getLatencyResults(client);
+
+    const { server_regions } = await this.hasura.query({
+      server_regions: {
+        __args: {
+          where: {
+            status: {
+              _eq: "Online",
+            },
+          },
+        },
+        value: true,
+        is_lan: true,
+        status: true,
+      },
+    });
+
+    // TODO - rather adding all regions at once we should add them when expanding the search
+
+    let regions = [];
+    for (const region of data.regions) {
+      const server_region = server_regions.find((server_region) => {
+        return server_region.value === region;
+      });
+
+      if (!server_region) {
+        continue;
+      }
+
+      const latency =
+        latencyResults[region.toLocaleLowerCase().replace(" ", "_")];
+      if (!server_region.is_lan || latency?.isLan === true) {
+        regions.push(server_region.value);
+      }
+    }
+
+    if (regions.length === 0) {
+      throw new JoinQueueError("No regions available");
+    }
+
+    const { type } = data;
 
     try {
       if (!type || !regions || regions.length === 0) {
         throw new JoinQueueError("Missing Type or Regions");
       }
 
-      lobby = await this.matchmakingLobbyService.getPlayerLobby(user);
+      lobby = await this.matchmakingLobbyService.getPlayerLobby(user.steam_id);
 
       if (!lobby) {
         throw new JoinQueueError("Unable to find Player Lobby");
@@ -161,7 +203,9 @@ export class MatchmakingGateway {
       return;
     }
 
-    const lobby = await this.matchmakingLobbyService.getPlayerLobby(user);
+    const lobby = await this.matchmakingLobbyService.getPlayerLobby(
+      user.steam_id,
+    );
 
     if (!lobby) {
       return;
@@ -189,5 +233,25 @@ export class MatchmakingGateway {
       confirmationId,
       user.steam_id,
     );
+  }
+
+  private async getLatencyResults(client: FiveStackWebSocketClient) {
+    const data = await this.redis.hgetall(
+      SocketsGateway.GET_PLAYER_CLIENT_LATENCY_TEST(client.sessionId),
+    );
+
+    const latencyResults: Record<
+      string,
+      {
+        isLan: boolean;
+        latency: number;
+      }
+    > = {};
+
+    for (const key in data) {
+      latencyResults[key] = JSON.parse(data[key]);
+    }
+
+    return latencyResults;
   }
 }

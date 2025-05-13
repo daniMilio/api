@@ -412,7 +412,22 @@ export class MatchmakeService {
     await this.redis.expire(lockKey, seconds);
   }
 
-  // TODO - watch for a player leaving a lobby and force the entire lobby to be left the queue with an error
+  public async markOffline(steamId: string) {
+    await this.queue.add(
+      "MarkPlayerOffline",
+      {
+        steamId,
+      },
+      {
+        delay: 60 * 1000,
+        jobId: `matchmaking:mark-offline:${steamId}`,
+      },
+    );
+  }
+
+  public async cancelOffline(steamId: string) {
+    await this.queue.remove(`matchmaking:mark-offline:${steamId}`);
+  }
 
   private async createMatchConfirmation(
     region: string,
