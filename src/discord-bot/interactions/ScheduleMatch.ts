@@ -260,7 +260,7 @@ export default class ScheduleMatch extends DiscordInteraction {
     const availableUsers = usersInChannel;
     const shuffledUsers = availableUsers.sort(() => Math.random() - 0.5);
 
-    const playersPerTeam = ExpectedPlayers[matchType];
+    const playersPerTeam = ExpectedPlayers[matchType] / 2;
     for (let playerIndex = 0; playerIndex < playersPerTeam * 2; playerIndex++) {
       if (playerIndex < shuffledUsers.length) {
         const user = shuffledUsers[playerIndex];

@@ -546,7 +546,7 @@ export class MatchAssistantService {
                       { name: "SERVER_PASSWORD", value: match.password },
                       {
                         name: "EXTRA_GAME_PARAMS",
-                        value: `-maxplayers 13 ${map.workshop_map_id ? `+host_workshop_map ${map.workshop_map_id}` : `+map ${map.name}`}`,
+                        value: `-maxplayers 13 ${map.workshop_map_id ? `+map de_inferno` : `+map ${map.name}`}`,
                       },
                       { name: "SERVER_ID", value: server.id },
                       {
