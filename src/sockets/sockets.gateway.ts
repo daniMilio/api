@@ -47,6 +47,10 @@ export class SocketsGateway {
     return `${SocketsGateway.GET_PLAYER_CLIENTS_BY_NODE(steamId, nodeId)}:${clientId}`;
   }
 
+  public static GET_PLAYER_CLIENT_LATENCY_TEST(sessionId: string) {
+    return `latency-test:${sessionId}`;
+  }
+
   constructor(
     private readonly logger: Logger,
     private readonly config: ConfigService,
@@ -127,6 +131,7 @@ export class SocketsGateway {
 
         client.id = uuidv4();
         client.user = request.user;
+        client.sessionId = request.session.id;
         client.node = this.nodeId;
 
         this.clients.set(client.id, client);

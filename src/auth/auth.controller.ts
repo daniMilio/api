@@ -5,12 +5,15 @@ import { HasuraAction } from "../hasura/hasura.controller";
 import { DiscordGuard } from "./strategies/DiscordGuard";
 import { CacheService } from "../cache/cache.service";
 import { HasuraService } from "../hasura/hasura.service";
+import { SocketsGateway } from "src/sockets/sockets.gateway";
+import { RedisManagerService } from "src/redis/redis-manager/redis-manager.service";
 
 @Controller("auth")
 export class AuthController {
   constructor(
     private readonly cache: CacheService,
     private readonly hasura: HasuraService,
+    private readonly redis: RedisManagerService,
   ) {}
 
   @UseGuards(SteamGuard)
@@ -73,6 +76,10 @@ export class AuthController {
   @HasuraAction()
   public async logout(@Req() request: Request) {
     if (request.session) {
+      await this.redis
+        .getConnection()
+        .del(SocketsGateway.GET_PLAYER_CLIENT_LATENCY_TEST(request.session.id));
+
       request.session.destroy((err) => {
         if (err) {
           console.error("Error destroying session:", err);
