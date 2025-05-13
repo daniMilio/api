@@ -27,14 +27,6 @@ export class SocketsGateway {
   private nodeId: string = process.env.POD_NAME;
   private clients: Map<string, FiveStackWebSocketClient> = new Map();
 
-  public static GET_AVAILABLE_NODES_KEY() {
-    return `available-socket-nodes`;
-  }
-
-  public static GET_NODE_STATUS_KEY(nodeId: string) {
-    return `socket-node:${nodeId}:status`;
-  }
-
   public static GET_PLAYER_KEY(steamId: string) {
     return `players:${steamId}`;
   }
@@ -90,8 +82,6 @@ export class SocketsGateway {
           break;
       }
     });
-
-    void this.setupNode();
   }
 
   @SubscribeMessage("ping")
@@ -143,10 +133,12 @@ export class SocketsGateway {
 
         await this.updateClient(client.user.steam_id, client.id);
 
+        await this.matchmaking.cancelOffline(client.user.steam_id);
+
         await this.sendPeopleOnline();
         await this.matchmaking.sendRegionStats(client.user);
         await this.matchmakingLobbyService.sendQueueDetailsToPlayer(
-          client.user,
+          client.user.steam_id,
         );
 
         client.on("close", async () => {
@@ -169,24 +161,7 @@ export class SocketsGateway {
 
             await this.sendPeopleOnline();
 
-            // GIVE THEM A DELAY
-            // this.matchMaking.leaveQueue(client);
-
-            // await this.hasura.mutation({
-            //   delete_lobby_players: {
-            //     __args: {
-            //       where: {
-            //         steam_id: {
-            //           _eq: client.user.steam_id,
-            //         },
-            //         status: {
-            //           _eq: "Accepted",
-            //         },
-            //       },
-            //     },
-            //     __typename: true,
-            //   },
-            // });
+            this.matchmaking.markOffline(client.user.steam_id);
           }
         });
       });
@@ -284,25 +259,5 @@ export class SocketsGateway {
     }
 
     this.clients.delete(clientId);
-  }
-
-  private async setupNode() {
-    await this.redis.sadd(
-      SocketsGateway.GET_AVAILABLE_NODES_KEY(),
-      this.nodeId,
-    );
-    const markOnline = async () => {
-      await this.redis.set(
-        SocketsGateway.GET_NODE_STATUS_KEY(this.nodeId),
-        "true",
-        "EX",
-        60,
-      );
-    };
-
-    // await markOnline();
-    // setInterval(async () => {
-    //   await markOnline();
-    // }, 30 * 1000);
   }
 }

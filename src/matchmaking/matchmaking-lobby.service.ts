@@ -31,8 +31,8 @@ export class MatchmakingLobbyService {
     this.redis = this.redisManager.getConnection();
   }
 
-  public async getPlayerLobby(user: User): Promise<PlayerLobby> {
-    let lobbyId = await this.getCurrentLobbyId(user.steam_id);
+  public async getPlayerLobby(steamId: string): Promise<PlayerLobby> {
+    let lobbyId = await this.getCurrentLobbyId(steamId);
 
     let lobby;
     if (validateUUID(lobbyId)) {
@@ -64,11 +64,11 @@ export class MatchmakingLobbyService {
     }
 
     if (!lobby) {
-      lobbyId = user.steam_id;
+      lobbyId = steamId;
       const { players_by_pk } = await this.hasura.query({
         players_by_pk: {
           __args: {
-            steam_id: user.steam_id,
+            steam_id: steamId,
           },
           name: true,
           steam_id: true,
@@ -271,8 +271,8 @@ export class MatchmakingLobbyService {
   }
 
   // TODO - extermly inefficient
-  public async sendQueueDetailsToPlayer(user: User) {
-    const lobby = await this.getPlayerLobby(user);
+  public async sendQueueDetailsToPlayer(steamId: string) {
+    const lobby = await this.getPlayerLobby(steamId);
 
     if (!lobby) {
       return;

@@ -99,7 +99,7 @@ export class MatchmakingGateway {
         throw new JoinQueueError("Missing Type or Regions");
       }
 
-      lobby = await this.matchmakingLobbyService.getPlayerLobby(user);
+      lobby = await this.matchmakingLobbyService.getPlayerLobby(user.steam_id);
 
       if (!lobby) {
         throw new JoinQueueError("Unable to find Player Lobby");
@@ -161,7 +161,9 @@ export class MatchmakingGateway {
       return;
     }
 
-    const lobby = await this.matchmakingLobbyService.getPlayerLobby(user);
+    const lobby = await this.matchmakingLobbyService.getPlayerLobby(
+      user.steam_id,
+    );
 
     if (!lobby) {
       return;
