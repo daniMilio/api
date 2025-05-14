@@ -39,7 +39,7 @@ export class ChatService {
               is_in_lineup: true,
             },
           },
-          client.user,
+          client.user.steam_id,
         );
 
         if (!matches_by_pk) {

@@ -100,10 +100,18 @@ delete_permissions:
     permission:
       filter:
         _or:
-          - steam_id:
-              _eq: X-Hasura-User-Id
-          - invited_by_steam_id:
-              _eq: X-Hasura-User-Id
+          - lobby:
+              players:
+                _and:
+                  - steam_id:
+                      _eq: X-Hasura-User-Id
+                  - captain:
+                      _eq: true
+          - _or:
+              - steam_id:
+                  _eq: X-Hasura-User-Id
+              - invited_by_steam_id:
+                  _eq: X-Hasura-User-Id
     comment: ""
 event_triggers:
   - name: lobby_players

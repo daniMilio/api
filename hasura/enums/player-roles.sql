@@ -1,6 +1,7 @@
 insert into e_player_roles ("value", "description") values
     ('user', 'Basic User'),
     ('verified_user', 'Verified User'),
+    ('streamer', 'Streamer'),
     ('match_organizer', 'Ability Manage Matches and bypass restrictions'),
     ('tournament_organizer', 'Ability Create and Manage Tournaments'),
     ('administrator', 'Administrator')

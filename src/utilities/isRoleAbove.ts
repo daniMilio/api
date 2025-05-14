@@ -3,6 +3,7 @@ import { e_player_roles_enum } from "generated";
 const roleOrder: e_player_roles_enum[] = [
   "user",
   "verified_user",
+  "streamer",
   "match_organizer",
   "tournament_organizer",
   "administrator",

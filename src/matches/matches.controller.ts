@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Req, Res } from "@nestjs/common";
+import { Controller, Get, Logger, Req, Res, Post } from "@nestjs/common";
 import { Request, Response } from "express";
 import { HasuraAction, HasuraEvent } from "../hasura/hasura.controller";
 import { User } from "../auth/types/User";
@@ -56,7 +56,6 @@ export class MatchesController {
         __args: {
           id: serverId,
         },
-        api_password: true,
         current_match: {
           id: true,
         },
@@ -592,7 +591,7 @@ export class MatchesController {
           requested_organizer: true,
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (!match || match.requested_organizer) {
@@ -887,7 +886,7 @@ export class MatchesController {
           },
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (matches_by_pk.options.lobby_access === "Private") {
@@ -961,7 +960,7 @@ export class MatchesController {
           is_organizer: true,
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (!matches_by_pk.is_organizer) {

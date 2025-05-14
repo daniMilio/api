@@ -180,6 +180,10 @@ export class MatchmakingLobbyService {
   public async removeLobbyDetails(lobbyId: string) {
     const lobbyDetails = await this.getLobbyDetails(lobbyId);
 
+    if (!lobbyDetails) {
+      return;
+    }
+
     await this.redis.hdel(
       getMatchmakingLobbyDetailsCacheKey(lobbyId),
       "details",

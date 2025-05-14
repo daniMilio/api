@@ -2815,6 +2815,9 @@ enum e_player_roles_enum {
   """Ability Manage Matches and bypass restrictions"""
   match_organizer
 
+  """Streamer"""
+  streamer
+
   """Ability Create and Manage Tournaments"""
   tournament_organizer
 

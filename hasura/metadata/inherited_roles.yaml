@@ -7,6 +7,10 @@
   role_set:
     - verified_user
     - user
+- role_name: streamer
+  role_set:
+    - verified_user
+    - user
 - role_name: tournament_organizer
   role_set:
     - match_organizer

@@ -42,10 +42,10 @@ export class HasuraService {
 
   public async query<R extends query_rootGenqlSelection>(
     request: R & { __name?: string },
-    user?: User,
+    steamId?: string,
   ): Promise<FieldsSelection<query_root, R>> {
     try {
-      return await (await this.getClient(user)).query(request);
+      return await (await this.getClient(steamId)).query(request);
     } catch (error) {
       if (error?.response) {
         throw error?.response.errors.at(0).message;
@@ -67,26 +67,26 @@ export class HasuraService {
     }
   }
 
-  private async getClient(user?: User) {
+  private async getClient(steamId?: string) {
     return createClient({
       url: `${this.config.endpoint}/v1/graphql`,
       // @ts-ignore
       headers: {
         "Content-Type": "application/json",
         "x-hasura-admin-secret": this.config.secret,
-        ...(user ? await this.getHasuraHeaders(user) : {}),
+        ...(steamId ? await this.getHasuraHeaders(steamId) : {}),
       },
     });
   }
 
-  public async getHasuraHeaders(user: User) {
+  public async getHasuraHeaders(steamId: string) {
     const playerRole = await this.cache.remember(
-      HasuraService.PLAYER_ROLE_CACHE_KEY(user.steam_id),
+      HasuraService.PLAYER_ROLE_CACHE_KEY(steamId),
       async () => {
         const { players_by_pk } = await this.query({
           players_by_pk: {
             __args: {
-              steam_id: user.steam_id,
+              steam_id: steamId,
             },
             role: true,
           },
@@ -99,7 +99,7 @@ export class HasuraService {
 
     return {
       "x-hasura-role": playerRole,
-      "x-hasura-user-id": user.steam_id.toString(),
+      "x-hasura-user-id": steamId,
     };
   }
 

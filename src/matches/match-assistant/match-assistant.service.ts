@@ -949,7 +949,7 @@ export class MatchAssistantService {
           can_schedule: true,
         },
       },
-      user,
+      user.steam_id,
     );
 
     return matches_by_pk.can_schedule;
@@ -965,7 +965,7 @@ export class MatchAssistantService {
           can_cancel: true,
         },
       },
-      user,
+      user.steam_id,
     );
 
     return matches_by_pk.can_cancel;
@@ -981,7 +981,7 @@ export class MatchAssistantService {
           can_start: true,
         },
       },
-      user,
+      user.steam_id,
     );
 
     return matches_by_pk.can_start;
@@ -997,7 +997,7 @@ export class MatchAssistantService {
           is_organizer: true,
         },
       },
-      user,
+      user.steam_id,
     );
 
     return matches_by_pk.is_organizer;
