@@ -10,7 +10,7 @@ DECLARE
     has_region_veto BOOLEAN;
     user_match_count int;
 BEGIN
-    IF (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'user' OR (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'verified_user' THEN
+    IF (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'user' OR (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'verified_user' OR (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-role')::text = 'streamer' THEN
         SELECT COUNT(*) FROM matches 
         WHERE organizer_steam_id = (current_setting('hasura.user', true)::jsonb ->> 'x-hasura-user-id')::bigint 
         AND status NOT IN (

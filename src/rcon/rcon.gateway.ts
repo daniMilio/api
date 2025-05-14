@@ -30,7 +30,8 @@ export class RconGateway {
     if (
       !client.user ||
       client.user.role === "user" ||
-      client.user.role === "verified_user"
+      client.user.role === "verified_user" ||
+      client.user.role === "streamer"
     ) {
       return;
     }
