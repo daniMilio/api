@@ -17685,9 +17685,6 @@ export default {
                     ]
                 }
             ],
-            "tv_connection_link": [
-                11
-            ],
             "tv_connection_string": [
                 11
             ],
@@ -18087,9 +18084,6 @@ export default {
             "tournament_brackets_aggregate": [
                 1782
             ],
-            "tv_connection_link": [
-                13
-            ],
             "tv_connection_string": [
                 13
             ],
@@ -18304,9 +18298,6 @@ export default {
             "started_at": [
                 1778
             ],
-            "tv_connection_link": [
-                11
-            ],
             "tv_connection_string": [
                 11
             ],
@@ -18442,9 +18433,6 @@ export default {
             ],
             "started_at": [
                 1778
-            ],
-            "tv_connection_link": [
-                11
             ],
             "tv_connection_string": [
                 11
@@ -18725,9 +18713,6 @@ export default {
             ],
             "tournament_brackets_aggregate": [
                 1785
-            ],
-            "tv_connection_link": [
-                1190
             ],
             "tv_connection_string": [
                 1190
