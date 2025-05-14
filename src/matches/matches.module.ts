@@ -241,6 +241,7 @@ export class MatchesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(MatchServerMiddlewareMiddleware).forRoutes(
       { path: "matches/current-match/:serverId", method: RequestMethod.ALL },
+      { path: "matches/verify-player", method: RequestMethod.POST },
       { path: "demos/:matchId/*", method: RequestMethod.POST },
       {
         path: "matches/:matchId/backup-rounds/*",

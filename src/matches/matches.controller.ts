@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Req, Res } from "@nestjs/common";
+import { Controller, Get, Logger, Req, Res, Post } from "@nestjs/common";
 import { Request, Response } from "express";
 import { HasuraAction, HasuraEvent } from "../hasura/hasura.controller";
 import { User } from "../auth/types/User";
@@ -56,7 +56,6 @@ export class MatchesController {
         __args: {
           id: serverId,
         },
-        api_password: true,
         current_match: {
           id: true,
         },
@@ -209,6 +208,68 @@ export class MatchesController {
     const data = JSON.parse(safeJsonStringify(match));
 
     response.status(200).json(data);
+  }
+
+  @Post("verify-player")
+  public async verifyPlayer(
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    const { steamId, serverId } = request.body;
+
+    const { servers_by_pk: server } = await this.hasura.query({
+      servers_by_pk: {
+        __args: {
+          id: serverId,
+        },
+        current_match: {
+          id: true,
+        },
+      },
+    });
+
+    if (!server || !server.current_match?.id) {
+      response.status(401).end();
+      return;
+    }
+
+    const { players_by_pk: player } = await this.hasura.query({
+      players_by_pk: {
+        __args: {
+          steam_id: steamId,
+        },
+        role: true,
+        is_banned: true,
+      },
+    });
+
+    if (
+      [
+        "administrator",
+        "tournament_organizer",
+        "match_organizer",
+        "streamer",
+      ].includes(player.role)
+    ) {
+      response.status(200).end();
+      return;
+    }
+
+    const { matches_by_pk } = await this.hasura.query({
+      matches_by_pk: {
+        __args: {
+          id: server.current_match.id,
+        },
+        id: true,
+      },
+    });
+
+    if (matches_by_pk?.id) {
+      response.status(200).end();
+      return;
+    }
+
+    response.status(401).end();
   }
 
   @HasuraEvent()
@@ -592,7 +653,7 @@ export class MatchesController {
           requested_organizer: true,
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (!match || match.requested_organizer) {
@@ -887,7 +948,7 @@ export class MatchesController {
           },
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (matches_by_pk.options.lobby_access === "Private") {
@@ -961,7 +1022,7 @@ export class MatchesController {
           is_organizer: true,
         },
       },
-      data.user,
+      data.user.steam_id,
     );
 
     if (!matches_by_pk.is_organizer) {

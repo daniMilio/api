@@ -180,7 +180,7 @@ export class MatchmakingLobbyService {
   public async removeLobbyDetails(lobbyId: string) {
     const lobbyDetails = await this.getLobbyDetails(lobbyId);
 
-    if(!lobbyDetails) {
+    if (!lobbyDetails) {
       return;
     }
 

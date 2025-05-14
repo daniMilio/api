@@ -57,7 +57,7 @@ export class HasuraController {
       return;
     }
 
-    return this.hasuraService.getHasuraHeaders(user);
+    return this.hasuraService.getHasuraHeaders(user.steam_id);
   }
 
   @Post("actions")
