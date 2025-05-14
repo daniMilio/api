@@ -210,68 +210,6 @@ export class MatchesController {
     response.status(200).json(data);
   }
 
-  @Post("verify-player")
-  public async verifyPlayer(
-    @Req() request: Request,
-    @Res() response: Response,
-  ) {
-    const { steamId, serverId } = request.body;
-
-    const { servers_by_pk: server } = await this.hasura.query({
-      servers_by_pk: {
-        __args: {
-          id: serverId,
-        },
-        current_match: {
-          id: true,
-        },
-      },
-    });
-
-    if (!server || !server.current_match?.id) {
-      response.status(401).end();
-      return;
-    }
-
-    const { players_by_pk: player } = await this.hasura.query({
-      players_by_pk: {
-        __args: {
-          steam_id: steamId,
-        },
-        role: true,
-        is_banned: true,
-      },
-    });
-
-    if (
-      [
-        "administrator",
-        "tournament_organizer",
-        "match_organizer",
-        "streamer",
-      ].includes(player.role)
-    ) {
-      response.status(200).end();
-      return;
-    }
-
-    const { matches_by_pk } = await this.hasura.query({
-      matches_by_pk: {
-        __args: {
-          id: server.current_match.id,
-        },
-        id: true,
-      },
-    });
-
-    if (matches_by_pk?.id) {
-      response.status(200).end();
-      return;
-    }
-
-    response.status(401).end();
-  }
-
   @HasuraEvent()
   public async match_events(data: HasuraEventData<matches_set_input>) {
     const matchId = (data.new.id || data.old.id) as string;
