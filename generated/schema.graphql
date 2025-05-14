@@ -12780,11 +12780,6 @@ type matches {
   ): tournament_brackets_aggregate!
 
   """
-  A computed field, executes function "get_match_tv_connection_link"
-  """
-  tv_connection_link: String
-
-  """
   A computed field, executes function "get_match_tv_connection_string"
   """
   tv_connection_string: String
@@ -12959,7 +12954,6 @@ input matches_bool_exp {
   teams: teams_bool_exp
   tournament_brackets: tournament_brackets_bool_exp
   tournament_brackets_aggregate: tournament_brackets_aggregate_bool_exp
-  tv_connection_link: String_comparison_exp
   tv_connection_string: String_comparison_exp
   winner: match_lineups_bool_exp
   winning_lineup_id: uuid_comparison_exp
@@ -13113,11 +13107,6 @@ type matches_max_fields {
   started_at: timestamptz
 
   """
-  A computed field, executes function "get_match_tv_connection_link"
-  """
-  tv_connection_link: String
-
-  """
   A computed field, executes function "get_match_tv_connection_string"
   """
   tv_connection_string: String
@@ -13216,11 +13205,6 @@ type matches_min_fields {
   """
   server_type: String
   started_at: timestamptz
-
-  """
-  A computed field, executes function "get_match_tv_connection_link"
-  """
-  tv_connection_link: String
 
   """
   A computed field, executes function "get_match_tv_connection_string"
@@ -13343,7 +13327,6 @@ input matches_order_by {
   status: order_by
   teams_aggregate: teams_aggregate_order_by
   tournament_brackets_aggregate: tournament_brackets_aggregate_order_by
-  tv_connection_link: order_by
   tv_connection_string: order_by
   winner: match_lineups_order_by
   winning_lineup_id: order_by
