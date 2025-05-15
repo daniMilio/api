@@ -127,12 +127,19 @@ export class MatchmakeService {
       return;
     }
 
-    const queueKey = getMatchmakingRankCacheKey(type, region);
-
     // TODO - its possible, but highly unlikley we will ever runinto the issue of too many lobbies in the queue
-    const lobbiesData = await this.redis.zrange(queueKey, 0, -1, "WITHSCORES");
+    const lobbiesData = await this.redis.zrange(
+      getMatchmakingRankCacheKey(type, region),
+      0,
+      -1,
+      "WITHSCORES",
+    );
 
     let lobbies = await this.processLobbyData(lobbiesData);
+
+    this.logger.log(
+      `Found ${lobbies.length} lobbies in queue for ${region} ${type}`,
+    );
 
     if (lobbies.length === 0) {
       return;
