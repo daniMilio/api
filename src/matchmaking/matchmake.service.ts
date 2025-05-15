@@ -168,13 +168,22 @@ export class MatchmakeService {
     for (const currentLobby of lobbies.slice(1)) {
       const firstLobbyInGroup = currentGroup.at(0);
 
+      // TODO - check if rank difference feature is enabled
+      const rankDiffEnabled = false;
+
+      if (!rankDiffEnabled) {
+        // if rank difference feature is disabled, just add lobbies in order
+        currentGroup.push(currentLobby);
+        continue;
+      }
+
       // calculate wait time in minutes
       const waitTimeMinutes = Math.floor(
         (Date.now() - firstLobbyInGroup.joinedAt.getTime()) / (1000 * 60),
       );
 
       // maximum allowed rank difference increases by 100 for each minute waited
-      const maxRankDiff = 100 * (waitTimeMinutes + 1);
+      const maxRankDiff = 1000 * (waitTimeMinutes + 1);
 
       // check if current lobby's rank is within acceptable range
       if (
@@ -212,7 +221,9 @@ export class MatchmakeService {
       return;
     }
 
-    await this.matchmake(type, region);
+    setTimeout(() => {
+      void this.matchmake(type, region);
+    }, 5 * 1000);
   }
 
   private async processLobbyData(
