@@ -183,9 +183,10 @@ export class MatchmakeService {
       }
 
       // calculate wait time in seconds
-      const waitTimeSeconds = Math.max(10, Math.floor(
-        (Date.now() - firstLobbyInGroup.joinedAt.getTime()) / 1000,
-      ));
+      const waitTimeSeconds = Math.max(
+        10,
+        Math.floor((Date.now() - firstLobbyInGroup.joinedAt.getTime()) / 1000),
+      );
 
       // maximum allowed rank difference increases proportionally with wait time (100 per minute)
       const maxRankDiff = 25 * waitTimeSeconds;
@@ -236,9 +237,12 @@ export class MatchmakeService {
     );
 
     // randomize the time to prevent all regions from matchingmake at the same time
-    setTimeout(() => {
-      void this.matchmake(type, region);
-    }, (10000 + Math.floor(Math.random() * 10000)));
+    setTimeout(
+      () => {
+        void this.matchmake(type, region);
+      },
+      10000 + Math.floor(Math.random() * 10000),
+    );
   }
 
   private async processLobbyData(
@@ -359,7 +363,8 @@ export class MatchmakeService {
           team1.lobbies.length;
         lobbiesAdded.push(lobbyIndex);
       } else if (
-        team2.players.length + lobby.players.length <= playersPerTeam
+        team2.players.length + lobby.players.length <=
+        playersPerTeam
       ) {
         const lock = await this.accquireLobbyLock(lobby.lobbyId);
         if (!lock) {
@@ -631,9 +636,12 @@ export class MatchmakeService {
 
     if (shouldMatchmake) {
       // randomize the time to prevent all regions from matchingmake at the same time
-      setTimeout(() => {
-        void this.matchmake(type, region);
-      }, (Math.floor(Math.random() * 10000)));
+      setTimeout(
+        () => {
+          void this.matchmake(type, region);
+        },
+        Math.floor(Math.random() * 10000),
+      );
     }
   }
 
