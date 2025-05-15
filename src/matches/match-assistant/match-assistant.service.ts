@@ -275,7 +275,13 @@ export class MatchAssistantService {
       return false;
     }
 
-    return await this.assignDedicatedServer(match.id, match.region);
+    if (await this.assignDedicatedServer(match.id, match.region)) {
+      return true;
+    }
+
+    await this.updateMatchStatus(match.id, "WaitingForServer");
+
+    return false;
   }
 
   private async assignDedicatedServer(
@@ -437,20 +443,8 @@ export class MatchAssistantService {
       const server = servers.at(-1);
 
       if (!server) {
-        await this.hasura.mutation({
-          update_matches_by_pk: {
-            __args: {
-              pk_columns: {
-                id: matchId,
-              },
-              _set: {
-                status: "WaitingForServer",
-              },
-            },
-            id: true,
-          },
-        });
-        return;
+        await this.updateMatchStatus(matchId, "WaitingForServer");
+        return false;
       }
 
       try {
@@ -1117,12 +1111,12 @@ export class MatchAssistantService {
     if (!match || !match.options) {
       throw Error("unable to find match");
     }
+    const { region_veto, map_veto, best_of } = match.options;
 
     let nextPhase: e_match_status_enum = "Live";
     if (
-      (match.options.map_veto &&
-        match.match_maps.length !== match.options.best_of) ||
-      (!match.region && match.options.region_veto)
+      (region_veto && !match.region) ||
+      (map_veto && match.match_maps.length !== best_of)
     ) {
       nextPhase = "Veto";
     }

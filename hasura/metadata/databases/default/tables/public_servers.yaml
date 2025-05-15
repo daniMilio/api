@@ -136,6 +136,9 @@ event_triggers:
       update:
         columns:
           - reserved_by_match_id
+          - region
+          - enabled
+          - connected
     retry_conf:
       interval_sec: 10
       num_retries: 0

@@ -279,23 +279,10 @@ export class DiscordPickPlayerService {
   public async startMatch(matchId: string) {
     await this.cache.forget(this.getAvailableUsersCacheKey(matchId));
 
-    const { matches_by_pk: match } = await this.hasura.query({
-      matches_by_pk: {
-        __args: {
-          id: matchId,
-        },
-        id: true,
-        options: {
-          map_veto: true,
-        },
-      },
-    });
-
-    if (match.options.map_veto) {
-      await this.matchAssistant.updateMatchStatus(matchId, "Veto");
-    } else {
-      await this.matchAssistant.updateMatchStatus(matchId, "Live");
-    }
+    await this.matchAssistant.updateMatchStatus(
+      matchId,
+      await this.matchAssistant.getNextPhase(matchId),
+    );
   }
 
   private getAvailableUsersCacheKey(matchId: string) {

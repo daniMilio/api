@@ -92,8 +92,6 @@ update_permissions:
         - short_name
       filter: {}
       check: null
-      set:
-        owner_steam_id: x-hasura-user-id
     comment: ""
   - role: tournament_organizer
     permission:
