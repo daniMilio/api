@@ -275,7 +275,13 @@ export class MatchAssistantService {
       return false;
     }
 
-    return await this.assignDedicatedServer(match.id, match.region);
+    if (await this.assignDedicatedServer(match.id, match.region)) {
+      return true;
+    }
+
+    await this.updateMatchStatus(match.id, "WaitingForServer");
+
+    return false;
   }
 
   private async assignDedicatedServer(
@@ -437,20 +443,8 @@ export class MatchAssistantService {
       const server = servers.at(-1);
 
       if (!server) {
-        await this.hasura.mutation({
-          update_matches_by_pk: {
-            __args: {
-              pk_columns: {
-                id: matchId,
-              },
-              _set: {
-                status: "WaitingForServer",
-              },
-            },
-            id: true,
-          },
-        });
-        return;
+        await this.updateMatchStatus(matchId, "WaitingForServer");
+        return false;
       }
 
       try {

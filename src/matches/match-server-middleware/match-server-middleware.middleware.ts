@@ -41,18 +41,24 @@ export class MatchServerMiddlewareMiddleware implements NestMiddleware {
       if (!validate(serverId)) {
         return response.status(401).end();
       }
-      const { servers_by_pk: server } = await this.hasura.query({
-        servers_by_pk: {
-          __args: {
-            id: serverId,
+      try {
+        const { servers_by_pk: server } = await this.hasura.query({
+          servers_by_pk: {
+            __args: {
+              id: serverId,
+            },
+            api_password: true,
           },
-          api_password: true,
-        },
-      });
+        });
 
-      if (server?.api_password !== apiPassword) {
+        if (server?.api_password !== apiPassword) {
+          return response.status(401).end();
+        }
+      } catch (error) {
+        console.warn("unable to fetch server", error.message);
         return response.status(401).end();
       }
+
       return next();
     }
 

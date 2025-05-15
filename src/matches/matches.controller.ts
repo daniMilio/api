@@ -13,6 +13,7 @@ import {
   match_map_veto_picks_set_input,
   matches_set_input,
   servers_set_input,
+  game_server_nodes_set_input,
 } from "../../generated";
 import { ConfigService } from "@nestjs/config";
 import { AppConfig } from "src/configs/types/AppConfig";
@@ -484,19 +485,7 @@ export class MatchesController {
       );
     }
 
-    await this.hasura.mutation({
-      update_matches_by_pk: {
-        __args: {
-          pk_columns: {
-            id: match_id,
-          },
-          _set: {
-            status: "Canceled",
-          },
-        },
-        __typename: true,
-      },
-    });
+    await this.matchAssistant.updateMatchStatus(match_id, "Canceled");
 
     return {
       success: true,
@@ -700,36 +689,11 @@ export class MatchesController {
   }
 
   @HasuraEvent()
-  public async server_availability(
-    data: HasuraEventData<
-      Pick<
-        servers_set_input,
-        "id" | "reserved_by_match_id" | "game_server_node_id"
-      >
-    >,
-  ) {
-    console.info("server_availability", data.new);
-
-    if (data.new.reserved_by_match_id !== null) {
-      return;
-    }
-
-    const { servers_by_pk } = await this.hasura.query({
-      servers_by_pk: {
-        __args: {
-          id: data.new.id,
-        },
-        reserved_by_match_id: true,
-        game_server_node: {
-          region: true,
-        },
-      },
-    });
-
+  public async server_availability(data: HasuraEventData<servers_set_input>) {
     if (
-      !servers_by_pk ||
-      servers_by_pk.reserved_by_match_id ||
-      !servers_by_pk.game_server_node
+      data.new.enabled === false ||
+      data.new.connected === false ||
+      data.new.reserved_by_match_id !== null
     ) {
       return;
     }
@@ -749,7 +713,7 @@ export class MatchesController {
               },
               {
                 region: {
-                  _eq: servers_by_pk.game_server_node.region,
+                  _eq: data.new.region,
                 },
               },
             ],
@@ -775,19 +739,77 @@ export class MatchesController {
       return;
     }
 
-    await this.hasura.mutation({
-      update_matches_by_pk: {
+    await this.matchAssistant.updateMatchStatus(match.id, "Live");
+  }
+
+  @HasuraEvent()
+  public async node_server_availability(
+    data: HasuraEventData<game_server_nodes_set_input>,
+  ) {
+    if (data.new.enabled === false || data.new.status !== "Online") {
+      return;
+    }
+
+    const { game_server_nodes_by_pk } = await this.hasura.query({
+      game_server_nodes_by_pk: {
         __args: {
-          pk_columns: {
-            id: match.id,
+          id: data.new.id,
+        },
+        servers_aggregate: {
+          __args: {
+            where: {
+              reserved_by_match_id: {
+                _is_null: true,
+              },
+            },
           },
-          _set: {
-            status: "Live",
+          aggregate: {
+            count: true,
           },
         },
-        __typename: true,
       },
     });
+
+    const totalMatchesToFind =
+      game_server_nodes_by_pk.servers_aggregate.aggregate.count;
+
+    const { matches } = await this.hasura.query({
+      matches: {
+        __args: {
+          where: {
+            status: {
+              _eq: "WaitingForServer",
+            },
+            _or: [
+              {
+                region: {
+                  _is_null: true,
+                },
+              },
+              {
+                region: {
+                  _eq: data.new.region,
+                },
+              },
+            ],
+          },
+          limit: totalMatchesToFind,
+          order_by: [
+            {
+              created_at: "asc",
+            },
+          ],
+        },
+        id: true,
+      },
+    });
+
+    for (const match of matches) {
+      if (!(await this.matchAssistant.assignServer(match.id))) {
+        break;
+      }
+      await this.matchAssistant.updateMatchStatus(match.id, "Live");
+    }
   }
 
   @HasuraAction()
