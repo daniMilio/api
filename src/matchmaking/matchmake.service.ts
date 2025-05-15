@@ -24,6 +24,7 @@ import { ExpectedPlayers } from "src/discord-bot/enums/ExpectedPlayers";
 export class MatchmakeService {
   public redis: Redis;
 
+  // TODO - fix race conditions for matchmaking across multiple regions
   constructor(
     public readonly logger: Logger,
     public readonly hasura: HasuraService,
@@ -124,7 +125,8 @@ export class MatchmakeService {
   public async matchmake(type: e_match_types_enum, region: string) {
     const lock = await this.aquireMatchmakeRegionLock(region);
     if (!lock) {
-      return;
+      console.warn("unable to acquire lock for region", region);
+      return 0;
     }
 
     // TODO - its possible, but highly unlikley we will ever runinto the issue of too many lobbies in the queue
@@ -137,12 +139,8 @@ export class MatchmakeService {
 
     let lobbies = await this.processLobbyData(lobbiesData);
 
-    this.logger.log(
-      `Found ${lobbies.length} lobbies in queue for ${region} ${type}`,
-    );
-
     if (lobbies.length === 0) {
-      return;
+      return 0;
     }
 
     // sort lobbies by a weighted score combining rank difference and wait time
@@ -184,13 +182,13 @@ export class MatchmakeService {
         continue;
       }
 
-      // calculate wait time in minutes
-      const waitTimeMinutes = Math.floor(
-        (Date.now() - firstLobbyInGroup.joinedAt.getTime()) / (1000 * 60),
-      );
+      // calculate wait time in seconds
+      const waitTimeSeconds = Math.max(10, Math.floor(
+        (Date.now() - firstLobbyInGroup.joinedAt.getTime()) / 1000,
+      ));
 
-      // maximum allowed rank difference increases by 100 for each minute waited
-      const maxRankDiff = 1000 * (waitTimeMinutes + 1);
+      // maximum allowed rank difference increases proportionally with wait time (100 per minute)
+      const maxRankDiff = 25 * waitTimeSeconds;
 
       // check if current lobby's rank is within acceptable range
       if (
@@ -224,13 +222,23 @@ export class MatchmakeService {
       void this.releaseMatchmakeRegionLock(region);
     });
 
-    if (!results.some((result) => result === true)) {
+    const totalPlayerNotQueued = results.reduce(
+      (acc, result) => acc + result,
+      0,
+    );
+
+    if (totalPlayerNotQueued < ExpectedPlayers[type]) {
       return;
     }
 
+    this.logger.log(
+      `${totalPlayerNotQueued} players not queued, expanding search....`,
+    );
+
+    // randomize the time to prevent all regions from matchingmake at the same time
     setTimeout(() => {
       void this.matchmake(type, region);
-    }, 5 * 1000);
+    }, (10000 + Math.floor(Math.random() * 10000)));
   }
 
   private async processLobbyData(
@@ -250,6 +258,7 @@ export class MatchmakeService {
       if (details.players.length === ExpectedPlayers[details.type]) {
         const lock = await this.accquireLobbyLock(details.lobbyId);
         if (!lock) {
+          console.warn("unable to acquire lock for lobby", details.lobbyId);
           continue;
         }
 
@@ -298,15 +307,19 @@ export class MatchmakeService {
     region: string,
     type: e_match_types_enum,
     lobbies: Array<MatchmakingLobby>,
-  ): Promise<boolean> {
+  ): Promise<number> {
     const requiredPlayers = ExpectedPlayers[type];
     const totalPlayers = lobbies.reduce(
       (acc, lobby) => acc + lobby.players.length,
       0,
     );
 
-    if (lobbies.length === 0 || totalPlayers < requiredPlayers) {
-      return false;
+    if (lobbies.length === 0) {
+      return 0;
+    }
+
+    if (totalPlayers < requiredPlayers) {
+      return totalPlayers;
     }
 
     // try to make as many valid matches as possible
@@ -333,6 +346,7 @@ export class MatchmakeService {
       if (team1.players.length + lobby.players.length <= playersPerTeam) {
         const lock = await this.accquireLobbyLock(lobby.lobbyId);
         if (!lock) {
+          console.warn("unable to acquire lock for lobby", lobby.lobbyId);
           continue;
         }
 
@@ -345,8 +359,7 @@ export class MatchmakeService {
           team1.lobbies.length;
         lobbiesAdded.push(lobbyIndex);
       } else if (
-        team2.players.length + lobby.players.length <=
-        playersPerTeam
+        team2.players.length + lobby.players.length <= playersPerTeam
       ) {
         const lock = await this.accquireLobbyLock(lobby.lobbyId);
         if (!lock) {
@@ -359,7 +372,6 @@ export class MatchmakeService {
         team2.avgRank =
           (team2.avgRank * (team2.lobbies.length - 1) + lobby.avgRank) /
           team2.lobbies.length;
-        lobbies.splice(lobbies.indexOf(lobby), 1);
         lobbiesAdded.push(lobbyIndex);
       }
     }
@@ -368,6 +380,7 @@ export class MatchmakeService {
       lobbies.splice(lobbyIndex, 1);
     }
 
+    let totalPlayerNotQueued = 0;
     // check if we have valid teams for this match
     if (
       team1.players.length === playersPerTeam &&
@@ -382,6 +395,8 @@ export class MatchmakeService {
         team1,
         team2,
       });
+    } else {
+      totalPlayerNotQueued = team1.players.length + team2.players.length;
     }
 
     // only try to re-matchmake lobbies that we were able to accuire a lock for
@@ -394,6 +409,8 @@ export class MatchmakeService {
       }
       await this.createMatches(region, type, lobbiesToMatch);
     }
+
+    return totalPlayerNotQueued;
   }
 
   private async aquireMatchmakeRegionLock(region: string): Promise<boolean> {
@@ -613,7 +630,10 @@ export class MatchmakeService {
     await this.sendRegionStats();
 
     if (shouldMatchmake) {
-      void this.matchmake(type, region);
+      // randomize the time to prevent all regions from matchingmake at the same time
+      setTimeout(() => {
+        void this.matchmake(type, region);
+      }, (Math.floor(Math.random() * 10000)));
     }
   }
 
