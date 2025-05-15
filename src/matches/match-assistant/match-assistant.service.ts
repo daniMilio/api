@@ -1117,12 +1117,12 @@ export class MatchAssistantService {
     if (!match || !match.options) {
       throw Error("unable to find match");
     }
+    const { region_veto, map_veto, best_of } = match.options;
 
     let nextPhase: e_match_status_enum = "Live";
     if (
-      (match.options.map_veto &&
-        match.match_maps.length !== match.options.best_of) ||
-      (!match.region && match.options.region_veto)
+      (region_veto && !match.region) ||
+      (map_veto && match.match_maps.length !== best_of)
     ) {
       nextPhase = "Veto";
     }

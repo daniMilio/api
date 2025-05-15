@@ -711,6 +711,8 @@ export class MatchmakeService {
       },
     });
 
+    console.info("really..... why... do...you ...do this....tome...");
+
     await this.matchAssistant.updateMatchStatus(match.id, "Veto");
 
     // add match id to the confirmation details

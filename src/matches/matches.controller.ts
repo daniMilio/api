@@ -286,7 +286,6 @@ export class MatchesController {
           id: matchId,
         },
         id: true,
-        status: true,
         options: {
           prefer_dedicated_server: true,
         },
@@ -302,7 +301,7 @@ export class MatchesController {
       throw Error("unable to find match");
     }
 
-    if (match.status === "Live" && data.old.status !== "WaitingForServer") {
+    if (status === "Live" && data.old.status !== "WaitingForServer") {
       if (match.server) {
         if (
           match.server.is_dedicated &&
@@ -709,6 +708,8 @@ export class MatchesController {
       >
     >,
   ) {
+    console.info("server_availability", data.new);
+
     if (data.new.reserved_by_match_id !== null) {
       return;
     }
