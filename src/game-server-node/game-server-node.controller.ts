@@ -43,9 +43,9 @@ export class GameServerNodeController {
     };
   }
 
-  @Get("/script/:gameServerNodeId.sh")
+  @Get("/script/:gameServerNodeId")
   public async script(@Req() request: Request, @Res() response: Response) {
-    const gameServerNodeId = request.params.gameServerNodeId;
+    const gameServerNodeId = request.params.gameServerNodeId.replace(".sh", "");
 
     const { game_server_nodes_by_pk } = await this.hasura.query({
       game_server_nodes_by_pk: {
@@ -131,13 +131,31 @@ export class GameServerNodeController {
     const map = request.query.map;
     const serverId = request.params.serverId;
 
+    let { steamRelay, pluginVersion } = request.query as {
+      steamRelay: string;
+      pluginVersion: string;
+    };
+
+    if (pluginVersion === "__RELEASE_VERSION__") {
+      const { settings_by_pk } = await this.hasura.query({
+        settings_by_pk: {
+          __args: {
+            name: "plugin_version",
+          },
+          value: true,
+        },
+      });
+      pluginVersion = settings_by_pk?.value;
+    }
+
     const { servers_by_pk: server } = await this.hasura.query({
       servers_by_pk: {
         __args: {
           id: serverId,
         },
+        plugin_version: true,
         connected: true,
-        rcon_status: true,
+        steam_relay: true,
         is_dedicated: true,
         current_match: {
           current_match_map_id: true,
@@ -155,6 +173,22 @@ export class GameServerNodeController {
       throw Error("server not found");
     }
 
+    if (pluginVersion && server.plugin_version !== pluginVersion) {
+      await this.hasura.mutation({
+        update_servers_by_pk: {
+          __args: {
+            pk_columns: {
+              id: serverId,
+            },
+            _set: {
+              plugin_version: pluginVersion,
+            },
+          },
+          __typename: true,
+        },
+      });
+    }
+
     if (server.current_match && !server.is_dedicated) {
       const currentMap = server.current_match?.match_maps.find((match_map) => {
         return match_map.id === server.current_match.current_match_map_id;
@@ -166,12 +200,33 @@ export class GameServerNodeController {
       }
     }
 
-    let rconStatus = server.rcon_status;
-    if (server.is_dedicated && rconStatus == null) {
-      await this.rcon.testConnection(serverId);
+    let status;
+    let steamRelayId = null;
+
+    const rcon = await this.rcon.connect(serverId);
+
+    if (rcon) {
+      if (steamRelay.toLowerCase() === "true") {
+        status = await rcon.send("status_json");
+
+        if (status) {
+          const {
+            server: { steamid },
+          } = JSON.parse(status) as {
+            server: {
+              steamid: string;
+            };
+          };
+
+          if (steamid !== "[A:1:0:0]") {
+            steamRelayId = steamid;
+          }
+        }
+      }
+      await this.rcon.disconnect(serverId);
     }
 
-    if (!server.connected) {
+    if (!server.connected || server.steam_relay !== steamRelayId) {
       await this.hasura.mutation({
         update_servers_by_pk: {
           __args: {
@@ -180,7 +235,8 @@ export class GameServerNodeController {
             },
             _set: {
               connected: true,
-              ...(rconStatus !== null && { rcon_status: rconStatus }),
+              steam_relay: steamRelayId,
+              plugin_version: pluginVersion,
             },
           },
           __typename: true,

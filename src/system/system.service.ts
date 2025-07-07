@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CacheService } from "src/cache/cache.service";
-import { CoreV1Api, KubeConfig } from "@kubernetes/client-node";
+import { CoreV1Api, KubeConfig, AppsV1Api } from "@kubernetes/client-node";
 import { HasuraService } from "src/hasura/hasura.service";
 import { ConfigService } from "@nestjs/config";
 import { TailscaleConfig } from "src/configs/types/TailscaleConfig";
@@ -10,71 +10,88 @@ import { DiscordConfig } from "src/configs/types/DiscordConfig";
 @Injectable()
 export class SystemService {
   private apiClient: CoreV1Api;
+  private appsClient: AppsV1Api;
+
+  private featuresDetected = false;
 
   constructor(
     private readonly cache: CacheService,
     private readonly hasura: HasuraService,
     private readonly config: ConfigService,
+    private readonly logger: Logger,
   ) {
     const kc = new KubeConfig();
     kc.loadFromDefault();
     this.apiClient = kc.makeApiClient(CoreV1Api);
+    this.appsClient = kc.makeApiClient(AppsV1Api);
+
+    this.detectFeatures();
   }
 
   public async detectFeatures() {
-    const tailscaleConfig = this.config.get<TailscaleConfig>("tailscale");
+    while (this.featuresDetected === false) {
+      try {
+        const tailscaleConfig = this.config.get<TailscaleConfig>("tailscale");
 
-    let supportsGameServerNodes = false;
-    if (
-      tailscaleConfig.key &&
-      tailscaleConfig.secret &&
-      tailscaleConfig.netName
-    ) {
-      supportsGameServerNodes = true;
+        let supportsGameServerNodes = false;
+        if (
+          tailscaleConfig.key &&
+          tailscaleConfig.secret &&
+          tailscaleConfig.netName
+        ) {
+          supportsGameServerNodes = true;
+        }
+
+        await this.hasura.mutation({
+          insert_settings_one: {
+            __args: {
+              object: {
+                name: "supports_game_server_nodes",
+                value: supportsGameServerNodes.toString(),
+              },
+              on_conflict: {
+                constraint: "settings_pkey",
+                update_columns: ["value"],
+              },
+            },
+            __typename: true,
+          },
+        });
+
+        const discordConfig = this.config.get<DiscordConfig>("discord");
+
+        let supportsDiscordBot = false;
+        if (
+          discordConfig.clientId &&
+          discordConfig.clientSecret &&
+          discordConfig.token
+        ) {
+          supportsDiscordBot = true;
+        }
+
+        await this.hasura.mutation({
+          insert_settings_one: {
+            __args: {
+              object: {
+                name: "public.supports_discord_bot",
+                value: supportsDiscordBot.toString(),
+              },
+              on_conflict: {
+                constraint: "settings_pkey",
+                update_columns: ["value"],
+              },
+            },
+            __typename: true,
+          },
+        });
+
+        this.featuresDetected = true;
+        return;
+      } catch (error) {
+        this.logger.warn("Error detecting features", error);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
-
-    await this.hasura.mutation({
-      insert_settings_one: {
-        __args: {
-          object: {
-            name: "supports_game_server_nodes",
-            value: supportsGameServerNodes.toString(),
-          },
-          on_conflict: {
-            constraint: "settings_pkey",
-            update_columns: ["value"],
-          },
-        },
-        __typename: true,
-      },
-    });
-
-    const discordConfig = this.config.get<DiscordConfig>("discord");
-
-    let supportsDiscordBot = false;
-    if (
-      discordConfig.clientId &&
-      discordConfig.clientSecret &&
-      discordConfig.token
-    ) {
-      supportsDiscordBot = true;
-    }
-
-    await this.hasura.mutation({
-      insert_settings_one: {
-        __args: {
-          object: {
-            name: "public.supports_discord_bot",
-            value: supportsDiscordBot.toString(),
-          },
-          on_conflict: {
-            constraint: "settings_pkey",
-            update_columns: ["value"],
-          },
-        },
-        __typename: true,
-      },
-    });
   }
 
   public async updateServices() {
@@ -86,16 +103,33 @@ export class SystemService {
         continue;
       }
 
-      await this.restartPod(pod);
+      try {
+        await this.restartDeployment(service);
+      } catch {
+        await this.restartPod(pod);
+      }
       await this.cache.forget(this.getServiceCacheKey(service));
     }
   }
 
   public async setVersions() {
+    const hasUpdates = [];
+
+    await this.updateGameServerVersion();
+
+    const panelVersion = await this.getPanelVersion();
+    const latestPanelVersion = await this.getLatestPanelVersion();
+
+    if (panelVersion !== latestPanelVersion) {
+      hasUpdates.push({
+        service: "panel",
+        currentVersion: panelVersion,
+        newVersion: latestPanelVersion,
+      });
+    }
+
     const services = await this.getServices();
     const latestVersions = await this.getLatestVersions();
-
-    const hasUpdates = [];
 
     for (const { service, version, pod } of Object.values(services)) {
       const latestVersion = latestVersions[service];
@@ -179,13 +213,40 @@ export class SystemService {
   }
 
   public async restartPod(pod: string) {
-    await this.apiClient.deleteNamespacedPod(pod, "5stack");
+    await this.apiClient.deleteNamespacedPod({
+      name: pod,
+      namespace: "5stack",
+    });
+
+    this.logger.log(`Successfully restarted pod ${pod}`);
+  }
+
+  public async restartDeployment(deploymentName: string) {
+    await this.appsClient.patchNamespacedDeployment({
+      name: deploymentName,
+      namespace: "5stack",
+      body: {
+        spec: {
+          template: {
+            metadata: {
+              annotations: {
+                "kubectl.kubernetes.io/restartedAt": new Date().toISOString(),
+              },
+            },
+          },
+        },
+      },
+    });
+
+    this.logger.log(`Successfully restarted deployment ${deploymentName}`);
   }
 
   public async getServices() {
-    const { body } = await this.apiClient.listNamespacedPod("5stack");
+    let postList = await this.apiClient.listNamespacedPod({
+      namespace: "5stack",
+    });
 
-    const pods = body.items.filter((pod) => {
+    const pods = postList.items.filter((pod) => {
       if (pod.metadata.labels.codepier) {
         return false;
       }
@@ -215,15 +276,15 @@ export class SystemService {
 
   private async getServiceVersion(service: string, podName: string) {
     try {
-      const { body } = await this.apiClient.readNamespacedPod(
-        podName,
-        "5stack",
-      );
+      const pod = await this.apiClient.readNamespacedPod({
+        name: podName,
+        namespace: "5stack",
+      });
 
       return (
         service === "hasura"
-          ? body.status.initContainerStatuses.at(0).imageID
-          : body.status.containerStatuses.at(0).imageID
+          ? pod.status.initContainerStatuses.at(0).imageID
+          : pod.status.containerStatuses.at(0).imageID
       )
         .split("@")
         .at(1);
@@ -243,5 +304,75 @@ export class SystemService {
 
   private getServiceCacheKey(service: string) {
     return `version:${service}`;
+  }
+
+  private async getPanelVersion() {
+    try {
+      const nodeList = await this.apiClient.listNode({
+        labelSelector: "node-role.kubernetes.io/control-plane",
+      });
+
+      return nodeList.items.at(0)?.metadata.labels["5stack-panel-version"];
+    } catch (error) {
+      this.logger.warn("unable to fetch panel version", error);
+      return "";
+    }
+  }
+
+  private async getLatestPanelVersion() {
+    return await this.cache.remember<string>(
+      this.getServiceCacheKey("panel"),
+      async () => {
+        try {
+          const response = await fetch(
+            "https://api.github.com/repos/5stackgg/5stack-panel/commits/main",
+          );
+          const { sha } = await response.json();
+          return sha;
+        } catch (error) {
+          this.logger.warn("Unable to fetch latest panel version", error);
+          return "";
+        }
+      },
+      300,
+    );
+  }
+
+  private async updateGameServerVersion() {
+    await this.cache.remember<string>(
+      this.getServiceCacheKey("plugin"),
+      async () => {
+        try {
+          const response = await fetch(
+            "https://api.github.com/repos/5stackgg/game-server/releases/latest",
+          );
+          const { tag_name } = await response.json();
+
+          if (!tag_name) {
+            this.logger.warn("no tag name found for game server plugin");
+            return;
+          }
+
+          await this.hasura.mutation({
+            insert_settings_one: {
+              __args: {
+                object: {
+                  name: "plugin_version",
+                  value: tag_name.replace("v", ""),
+                },
+                on_conflict: {
+                  constraint: "settings_pkey",
+                  update_columns: ["value"],
+                },
+              },
+              __typename: true,
+            },
+          });
+        } catch (error) {
+          this.logger.warn("Unable to fetch latest game server version", error);
+        }
+      },
+      300,
+    );
   }
 }

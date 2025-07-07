@@ -5,7 +5,6 @@ CREATE OR REPLACE FUNCTION public.get_match_tv_connection_string(match public.ma
      AS $$
  DECLARE
      password text;
-     connection_string text;
      server_host text;
      tv_port int;
  BEGIN
@@ -25,9 +24,7 @@ CREATE OR REPLACE FUNCTION public.get_match_tv_connection_string(match public.ma
     if(password is null) then
         return null;
     end if;
-   
-    connection_string := CONCAT('connect ', server_host, ':', tv_port, '; password ', password);
     
-    RETURN connection_string;
+    RETURN CONCAT('connect ', CONCAT(server_host, ':', tv_port), '; password ', password);
  END;
  $$;

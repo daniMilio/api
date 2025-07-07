@@ -12,12 +12,12 @@ export class RconService {
     private readonly notifications: NotificationsService,
   ) {}
 
-  private CONNECTION_TIMEOUT = 10 * 1000;
+  private CONNECTION_TIMEOUT = 3 * 1000;
 
   private connections: Record<string, RconClient> = {};
   private connectTimeouts: Record<string, NodeJS.Timeout> = {};
 
-  public async connect(serverId: string) {
+  public async connect(serverId: string): Promise<RconClient | null> {
     if (this.connections[serverId]) {
       this.setupConnectionTimeout(serverId);
 
@@ -47,6 +47,7 @@ export class RconService {
     }
 
     const rcon = new RconClient({
+      timeout: this.CONNECTION_TIMEOUT,
       host: server.game_server_node?.node_ip
         ? server.game_server_node.node_ip
         : server.host,
@@ -69,11 +70,25 @@ export class RconService {
         await this.disconnect(serverId);
       })
       .on("end", () => {
+        if (!this.connections[serverId]) {
+          return;
+        }
         delete this.connections[serverId];
       });
 
     try {
-      await rcon.connect();
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error(
+              `RCON connection timeout after ${this.CONNECTION_TIMEOUT}ms`,
+            ),
+          );
+        }, this.CONNECTION_TIMEOUT);
+      });
+
+      await Promise.race([rcon.connect(), timeoutPromise]);
+
       if (!server.rcon_status && server.is_dedicated) {
         this.hasuraService.mutation({
           update_servers_by_pk: {
@@ -90,6 +105,14 @@ export class RconService {
         });
       }
     } catch (error) {
+      try {
+        if (rcon.authenticated) {
+          rcon.end();
+        }
+      } catch (cleanupError) {
+        console.warn("Error during RCON cleanup:", cleanupError);
+      }
+
       if (server.rcon_status && server.is_dedicated) {
         this.hasuraService.mutation({
           update_servers_by_pk: {
@@ -112,20 +135,12 @@ export class RconService {
           entity_id: serverId,
         });
       }
-
-      // TODO - we should return null here
-      return rcon;
+      return;
     }
 
     this.setupConnectionTimeout(serverId);
 
     return (this.connections[serverId] = rcon);
-  }
-
-  public async testConnection(serverId: string) {
-    await this.connect(serverId);
-
-    await this.disconnect(serverId);
   }
 
   private setupConnectionTimeout(serverId: string) {
@@ -139,8 +154,8 @@ export class RconService {
     clearTimeout(this.connectTimeouts[serverId]);
 
     if (this.connections[serverId]) {
-      await this.connections[serverId].end();
+      this.connections[serverId].end();
+      delete this.connections[serverId];
     }
-    return;
   }
 }

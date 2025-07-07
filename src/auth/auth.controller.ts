@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards, Req, Res } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Req,
+  Res,
+  UseFilters,
+} from "@nestjs/common";
 import { Request, Response } from "express";
 import { SteamGuard } from "./strategies/SteamGuard";
 import { HasuraAction } from "../hasura/hasura.controller";

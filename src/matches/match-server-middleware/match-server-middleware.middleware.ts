@@ -21,13 +21,8 @@ export class MatchServerMiddlewareMiddleware implements NestMiddleware {
     let matchId: string | undefined;
     let serverId: string | undefined;
 
-    if (request.method === "POST") {
-      matchId = request.body.matchId as string;
-      serverId = request.body.serverId as string;
-    } else {
-      matchId = request.params.matchId as string;
-      serverId = request.params.serverId as string;
-    }
+    matchId = request.body?.matchId || (request.params.matchId as string);
+    serverId = request.body?.serverId || (request.params.serverId as string);
 
     if (!matchId && !serverId) {
       return response.status(401).end();
@@ -35,6 +30,7 @@ export class MatchServerMiddlewareMiddleware implements NestMiddleware {
 
     const apiPassword = request.headers.authorization
       ?.replace("Bearer", "")
+      ?.replace("bearer", "")
       .trim();
 
     if (serverId) {

@@ -89,6 +89,11 @@ export class MatchesController {
         lineup_2_id: true,
         organizer_steam_id: true,
         current_match_map_id: true,
+        server: {
+          server_region: {
+            is_lan: true,
+          },
+        },
         options: {
           mr: true,
           type: true,
@@ -160,26 +165,60 @@ export class MatchesController {
       matches_by_pk.status === "Tie" ||
       matches_by_pk.status === "Canceled" ||
       matches_by_pk.status === "Forfeit" ||
-      matches_by_pk.status === "Finished"
+      matches_by_pk.status === "Finished" ||
+      matches_by_pk.status === "Surrendered"
     ) {
       response.status(204).end();
       return;
     }
 
-    const match = matches_by_pk;
+    const match = matches_by_pk as typeof matches_by_pk & {
+      is_lan: boolean;
+      options: typeof matches_by_pk.options & {
+        cfg_override: string;
+      };
+      lineup_1: typeof matches_by_pk.lineup_1 & {
+        lineup_players: Array<
+          Omit<(typeof matches_by_pk.lineup_1.lineup_players)[0], "player"> & {
+            player: Omit<
+              (typeof matches_by_pk.lineup_1.lineup_players)[0]["player"],
+              "name"
+            >;
+          }
+        >;
+      };
+      lineup_2: typeof matches_by_pk.lineup_2 & {
+        lineup_players: Array<
+          Omit<(typeof matches_by_pk.lineup_2.lineup_players)[0], "player"> & {
+            player: Omit<
+              (typeof matches_by_pk.lineup_2.lineup_players)[0]["player"],
+              "name"
+            >;
+          }
+        >;
+      };
+    };
 
-    const { match_type_cfgs_by_pk: matchTypeCfg } = await this.hasura.query({
-      match_type_cfgs_by_pk: {
+    match.is_lan = match.server.server_region.is_lan;
+    delete match.server;
+
+    const { match_type_cfgs } = await this.hasura.query({
+      match_type_cfgs: {
         __args: {
-          type: match.options.type,
+          where: {
+            type: {
+              _in: ["Base", "Live", match.options.type],
+            },
+          },
         },
         cfg: true,
       },
     });
 
-    if (matchTypeCfg) {
-      // @ts-ignore
-      match.options.cfg_override = matchTypeCfg.cfg;
+    if (match_type_cfgs) {
+      match.options.cfg_override = match_type_cfgs
+        .map((cfg) => cfg.cfg)
+        .join("\n");
     }
 
     match.lineup_1.lineup_players = match.lineup_1.lineup_players.map(
@@ -189,8 +228,7 @@ export class MatchesController {
         is_banned: player.player.is_banned,
         is_gagged: player.player.is_gagged,
         is_muted: player.player.is_muted,
-        // @ts-ignore
-        player: undefined,
+        player: undefined as undefined,
       }),
     );
 
@@ -201,8 +239,7 @@ export class MatchesController {
         is_banned: player.player.is_banned,
         is_gagged: player.player.is_gagged,
         is_muted: player.player.is_muted,
-        // @ts-ignore
-        player: undefined,
+        player: undefined as undefined,
       }),
     );
 
@@ -225,7 +262,8 @@ export class MatchesController {
       status === "Tie" ||
       status === "Forfeit" ||
       status === "Canceled" ||
-      status === "Finished"
+      status === "Finished" ||
+      status === "Surrendered"
     ) {
       await this.removeDiscordIntegration(matchId);
       await this.matchmaking.cancelMatchMakingByMatchId(matchId);
@@ -866,6 +904,13 @@ export class MatchesController {
           where: {
             steam_id: {
               _eq: data.user.steam_id,
+            },
+            lineup: {
+              v_match_lineup: {
+                match_id: {
+                  _eq: data.match_id,
+                },
+              },
             },
           },
         },

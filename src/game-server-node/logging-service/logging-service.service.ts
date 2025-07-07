@@ -23,7 +23,7 @@ export class LoggingServiceService {
     stream: Writable,
     previous = false,
     download = false,
-  ): Promise<() => void> {
+  ): Promise<void> {
     let archive: archiver.Archiver;
 
     if (download) {
@@ -37,31 +37,11 @@ export class LoggingServiceService {
 
     const pods = await this.getPodsFromService(service);
 
-    const aborts: Array<() => void> = [];
-
     for (const pod of pods) {
       await Promise.all([
-        this.getLogsForPod(
-          pod,
-          stream,
-          download,
-          previous,
-          250,
-          aborts,
-          archive,
-        ),
+        this.getLogsForPod(pod, stream, download, previous, 250, archive),
       ]);
     }
-
-    return () => {
-      for (const abort of aborts) {
-        try {
-          abort();
-        } catch (error) {
-          this.logger.error("Failed to abort pod logs", error);
-        }
-      }
-    };
   }
 
   private async getPodsFromService(service: string) {
@@ -75,8 +55,58 @@ export class LoggingServiceService {
   }
 
   private async getPods(namespace = this.namespace) {
-    const { body } = await this.coreApi.listNamespacedPod(namespace);
-    return body.items;
+    const postList = await this.coreApi.listNamespacedPod({
+      namespace,
+    });
+    return postList.items;
+  }
+
+  private async tryGetPodLogs(
+    logApi: Log,
+    namespace: string,
+    pod: V1Pod,
+    containerName: string,
+    logStream: PassThrough,
+    stream: Writable,
+    previous: boolean,
+    download: boolean,
+    tailLines: number,
+  ): Promise<void> {
+    try {
+      let podLogs: Awaited<ReturnType<typeof logApi.log>>;
+
+      stream.on("end", () => {
+        podLogs?.abort();
+        stream.destroy();
+      });
+      stream.on("close", () => {
+        podLogs?.abort();
+        stream.destroy();
+      });
+      stream.on("error", () => {
+        podLogs?.abort();
+        stream.destroy();
+      });
+
+      podLogs = await logApi.log(
+        namespace,
+        pod.metadata.name,
+        containerName,
+        logStream,
+        {
+          previous,
+          pretty: false,
+          timestamps: true,
+          follow: download === false,
+          tailLines,
+        },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to get logs for pod ${pod.metadata.name}, container ${containerName}`,
+        error,
+      );
+    }
   }
 
   public async getLogsForPod(
@@ -85,7 +115,6 @@ export class LoggingServiceService {
     download = false,
     previous = false,
     tailLines = 1,
-    aborts?: Array<() => void>,
     archive?: archiver.Archiver,
   ) {
     let totalAdded = 0;
@@ -147,26 +176,17 @@ export class LoggingServiceService {
 
       const logApi = new Log(this.kubeConfig);
 
-      const podLogs = await logApi.log(
+      await this.tryGetPodLogs(
+        logApi,
         this.namespace,
-        pod.metadata.name,
+        pod,
         container.name,
         logStream,
-        {
-          previous,
-          pretty: false,
-          timestamps: true,
-          follow: download === false,
-          tailLines,
-        },
+        stream,
+        previous,
+        download,
+        tailLines,
       );
-
-      if (aborts) {
-        aborts.push(() => {
-          stream.end();
-          podLogs.abort();
-        });
-      }
     }
   }
 }

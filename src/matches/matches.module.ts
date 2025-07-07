@@ -217,6 +217,10 @@ export class MatchesModule implements NestModule {
     const matches = await this.hasuraService.query({
       matches: {
         __args: {
+          where: {
+            ended_at: { _is_null: false },
+            winning_lineup_id: { _is_null: false },
+          },
           order_by: [
             {
               created_at: "asc",
@@ -225,25 +229,34 @@ export class MatchesModule implements NestModule {
         },
         id: true,
         created_at: true,
+        ended_at: true,
       },
     });
 
     for (const match of matches.matches) {
-      await this.postgres.query(
-        `
-        SELECT generate_player_elo_for_match($1)
-      `,
-        [match.id],
-      );
+      try {
+        await this.postgres.query(
+          `
+          SELECT generate_player_elo_for_match($1)
+        `,
+          [match.id],
+        );
+      } catch (error) {
+        console.error(
+          `Failed to generate player ratings for match ${match.id}:`,
+          error,
+        );
+        // Continue with the next match instead of failing completely
+      }
     }
   }
 
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(MatchServerMiddlewareMiddleware).forRoutes(
       { path: "matches/current-match/:serverId", method: RequestMethod.ALL },
-      { path: "demos/:matchId/*", method: RequestMethod.POST },
+      { path: "demos/:matchId/*splat", method: RequestMethod.POST },
       {
-        path: "matches/:matchId/backup-rounds/*",
+        path: "matches/:matchId/backup-rounds/*splat",
         method: RequestMethod.POST,
       },
     );

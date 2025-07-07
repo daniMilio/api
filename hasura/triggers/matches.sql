@@ -158,6 +158,8 @@ CREATE TRIGGER tai_match AFTER INSERT ON public.matches FOR EACH ROW EXECUTE FUN
 CREATE OR REPLACE FUNCTION public.tau_matches() RETURNS TRIGGER
     LANGUAGE plpgsql
     AS $$
+DECLARE
+    _server_id UUID;
 BEGIN
     IF is_tournament_match(NEW) THEN
         PERFORM update_tournament_bracket(NEW);
@@ -173,6 +175,11 @@ BEGIN
             WHERE match_lineup_id = NEW.lineup_1_id OR match_lineup_id = NEW.lineup_2_id;
     END IF;
 
+    IF NEW.status IN ('Tie', 'Forfeit', 'Canceled', 'Finished', 'Surrendered') THEN
+        select server_id into _server_id from matches where id = NEW.id;
+        UPDATE servers SET reserved_by_match_id = null WHERE id = _server_id;
+    END IF;
+
 	RETURN NEW;
 END;
 $$;
@@ -186,6 +193,10 @@ CREATE OR REPLACE FUNCTION public.tbu_matches() RETURNS TRIGGER
 DECLARE
     has_map_veto BOOLEAN;
     has_region_veto BOOLEAN;
+    _map_pool_id UUID;
+    _map_pool UUID[];
+    _map_pool_count int;
+    _regions text[];
 BEGIN
 
     IF (NEW.status = 'WaitingForServer' AND OLD.status = 'WaitingForServer') AND (NEW.region != OLD.region OR NEW.server_id != OLD.server_id) THEN
@@ -224,14 +235,27 @@ BEGIN
     END IF;
 
 
-    IF (OLD.status = 'Canceled' AND NEW.status != 'Canceled') THEN
+    IF (
+        OLD.status = 'Canceled' AND NEW.status != 'Canceled' OR
+        OLD.status = 'Forfeit' AND NEW.status != 'Forfeit' OR
+        OLD.status = 'Tie' AND NEW.status != 'Tie' OR
+        OLD.status = 'Surrendered' AND NEW.status != 'Surrendered'
+    ) THEN
         SELECT map_veto, region_veto INTO has_map_veto, has_region_veto FROM match_options WHERE id = NEW.match_options_id;
 
-        IF has_region_veto THEN
+        SELECT regions INTO _regions FROM match_options WHERE id = NEW.match_options_id;
+
+        IF has_region_veto AND array_length(_regions, 1) > 1 THEN
             DELETE FROM match_region_veto_picks WHERE match_id = NEW.id;
         END IF;
 
-        IF has_map_veto THEN 
+        SELECT map_pool_id INTO _map_pool_id FROM match_options WHERE id = NEW.match_options_id;
+
+        SELECT array_agg(map_id) INTO _map_pool FROM _map_pool WHERE map_pool_id = _map_pool_id;
+
+        _map_pool_count = array_length(_map_pool, 1);
+
+        IF has_map_veto AND _map_pool_count > 1 THEN 
             DELETE FROM match_map_veto_picks WHERE match_id = NEW.id;
             DELETE FROM match_maps WHERE match_id = NEW.id;
         END IF;
